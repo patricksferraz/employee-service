@@ -20,13 +20,16 @@ func NewKeycloakEmployeeRepository(keycloak *external.Keycloak) *KeycloakEmploye
 }
 
 func (r *KeycloakEmployeeRepository) CreateEmployee(ctx context.Context, employee *entity.Employee) error {
+	createdAt := employee.CreatedAt.Unix()
 	user := gocloak.User{
-		ID:            &employee.ID,
-		FirstName:     &employee.FirstName,
-		LastName:      &employee.LastName,
-		Email:         &employee.Email,
-		Enabled:       &employee.Enabled,
-		EmailVerified: &employee.EmailVerified,
+		ID:               &employee.ID,
+		CreatedTimestamp: &createdAt,
+		Username:         &employee.Username,
+		FirstName:        &employee.FirstName,
+		LastName:         &employee.LastName,
+		Email:            &employee.Email,
+		Enabled:          &employee.Enabled,
+		EmailVerified:    &employee.EmailVerified,
 	}
 
 	attr, err := utils.Struct2Attr(employee.Attributes)
@@ -43,7 +46,10 @@ func (r *KeycloakEmployeeRepository) CreateEmployee(ctx context.Context, employe
 	// TODO: check if session is ended
 	defer r.K.Client.LogoutUserSession(ctx, token.AccessToken, r.K.Realm, token.SessionState)
 
-	r.K.Client.CreateUser(ctx, token.AccessToken, r.K.Realm, user)
+	_, err = r.K.Client.CreateUser(ctx, token.AccessToken, r.K.Realm, user)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

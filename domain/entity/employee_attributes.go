@@ -9,7 +9,7 @@ func init() {
 }
 
 type EmployeeAttr struct {
-	Pis []string `json:"pis,omitempty" valid:"notnull"`
+	Pis []string `json:"pis,omitempty" valid:"required"`
 }
 
 func NewEmployeeAttr(pis string) (*EmployeeAttr, error) {

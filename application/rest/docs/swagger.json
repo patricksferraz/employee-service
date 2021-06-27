@@ -12,7 +12,7 @@
     },
     "basePath": "/api/v1",
     "paths": {
-        "/employee": {
+        "/employees": {
             "post": {
                 "description": "create employee",
                 "consumes": [

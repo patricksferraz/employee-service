@@ -50,7 +50,7 @@ info:
   title: Employee Swagger API
   version: "1.0"
 paths:
-  /employee:
+  /employees:
     post:
       consumes:
       - application/json

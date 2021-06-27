@@ -28,7 +28,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/employee": {
+        "/employees": {
             "post": {
                 "description": "create employee",
                 "consumes": [

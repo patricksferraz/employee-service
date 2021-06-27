@@ -17,9 +17,9 @@ type Employee struct {
 	FirstName     string        `json:"first_name,omitempty" valid:"notnull"`
 	LastName      string        `json:"last_name,omitempty" valid:"notnull"`
 	Email         string        `json:"email,omitempty" valid:"notnull"`
-	Enabled       bool          `json:"enabled,omitempty" valid:"notnull"`
-	EmailVerified bool          `json:"email_verified,omitempty" valid:"notnull"`
-	Attributes    *EmployeeAttr `json:"attributes,omitempty" valid:"notnull"`
+	Enabled       bool          `json:"enabled,omitempty" valid:"-"`
+	EmailVerified bool          `json:"email_verified,omitempty" valid:"-"`
+	Attributes    *EmployeeAttr `json:"attributes,omitempty" valid:"-"`
 }
 
 func NewEmployee(id, username, firstName, lastName, email, pis string, enabled, emailVerified bool, createdAt time.Time) (*Employee, error) {

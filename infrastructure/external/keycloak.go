@@ -36,12 +36,10 @@ func init() {
 
 func ConnectKeycloak() *Keycloak {
 	k := &Keycloak{
-		BasePath:     os.Getenv("KEYCLOAK_BASE_PATH"),
-		Realm:        os.Getenv("KEYCLOAK_REALM"),
-		ClientID:     os.Getenv("KEYCLOAK_CLIENT_ID"),
-		ClientSecret: os.Getenv("KEYCLOAK_CLIENT_SECRET"),
-		Username:     os.Getenv("KEYCLOAK_REALM_ADMIN_USERNAME"),
-		Password:     os.Getenv("KEYCLOAK_REALM_ADMIN_PASSWORD"),
+		BasePath: os.Getenv("KEYCLOAK_BASE_PATH"),
+		Realm:    os.Getenv("KEYCLOAK_REALM"),
+		Username: os.Getenv("KEYCLOAK_REALM_ADMIN_USERNAME"),
+		Password: os.Getenv("KEYCLOAK_REALM_ADMIN_PASSWORD"),
 	}
 	k.Client = gocloak.NewClient(k.BasePath)
 

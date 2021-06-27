@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	// _ "dev.azure.com/c4ut/TimeClock/_git/employee-service/application/rest/docs"
+	_ "dev.azure.com/c4ut/TimeClock/_git/employee-service/application/rest/docs"
 	_service "dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/service"
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/infrastructure/external"
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/infrastructure/repository"
@@ -38,7 +38,7 @@ func StartRestServer(keycloak *external.Keycloak, port int) {
 	v1 := r.Group("api/v1/employees")
 	{
 		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		v1.POST("/employess", employeeRestService.CreateEmployee)
+		v1.POST("/", employeeRestService.CreateEmployee)
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)
