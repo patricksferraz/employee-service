@@ -19,5 +19,10 @@ type Employee struct {
 }
 
 type HTTPError struct {
-	Error string `json:"error" example:"status bad request"`
+	Code  int    `json:"code,omitempty" example:"400"`
+	Error string `json:"error,omitempty" example:"status bad request"`
+}
+
+type IDRequest struct {
+	ID string `uri:"id" binding:"required,uuid"`
 }

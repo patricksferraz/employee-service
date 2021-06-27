@@ -40,7 +40,7 @@ var doc = `{
                 "tags": [
                     "Employee"
                 ],
-                "summary": "Create a employee",
+                "summary": "create a employee",
                 "operationId": "createEmployee",
                 "parameters": [
                     {
@@ -62,6 +62,51 @@ var doc = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/employees/{id}": {
+            "get": {
+                "description": "Router for find a employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "summary": "find a employee",
+                "operationId": "findEmployee",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.Employee"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/rest.HTTPError"
                         }
@@ -121,6 +166,10 @@ var doc = `{
         "rest.HTTPError": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
                 "error": {
                     "type": "string",
                     "example": "status bad request"

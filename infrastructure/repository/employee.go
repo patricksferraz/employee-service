@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/entity"
@@ -68,7 +69,8 @@ func (r *KeycloakEmployeeRepository) FindEmployee(ctx context.Context, id string
 		Pis:           (*e.Attributes)["pis"][0],
 	}
 	employee.ID = *e.ID
-	employee.CreatedAt = time.Unix(*e.CreatedTimestamp, 0)
+	fmt.Println(*e.CreatedTimestamp)
+	employee.CreatedAt = time.Unix(0, *e.CreatedTimestamp*int64(time.Millisecond))
 
 	return employee, nil
 }
