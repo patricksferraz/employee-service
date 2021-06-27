@@ -39,6 +39,8 @@ cloud.google.com/go/storage v1.10.0/go.mod h1:FLPqc6j+Ki4BU591ie1oL6qBQGu2Bl/tZ9
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+github.com/Cegielkowski/pisvalidator v1.0.0 h1:5GRvTCiiOePFuOanbg5KXtzI+9LtD0QglZMeIC5wZJA=
+github.com/Cegielkowski/pisvalidator v1.0.0/go.mod h1:gopieUJCXSy/6tjw2TbyiTw3mxByhITNMQUVZfHnp50=
 github.com/Nerzal/gocloak/v8 v8.5.0 h1:sk84BrGnmFyqie+KcBtg13RrVCC3Skx8LnST8/gxqpY=
 github.com/Nerzal/gocloak/v8 v8.5.0/go.mod h1:Zzuv9uk+6drd8VrFT0ihxvIicMv7+umQKtKfnp5jCAs=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
@@ -302,6 +304,10 @@ github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3Rllmb
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
 github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c/go.mod h1:lzWF7FIEvWOWxwDKqyGYQf6ZUaNfKdP144TG7ZOy1lc=
+github.com/patricksferraz/pisvalidator v1.0.0 h1:Qm3ZqZwrku2h049G0f4Ix/f7I+qmhNgtKAuDDrRQczw=
+github.com/patricksferraz/pisvalidator v1.0.0/go.mod h1:EVfgPzLQuRuOGM+QAr+jN3tr75Yh1HfjAytGnPkzIHQ=
+github.com/patricksferraz/pisvalidator v1.1.0 h1:z82iVnR4MRtjNnmN+v2JaYOQHUvX1wZ5UB4VGigD0Bk=
+github.com/patricksferraz/pisvalidator v1.1.0/go.mod h1:3LsShEWFzmUXyclk/3C3OBr24bHE873TYikCP/4P2Bg=
 github.com/pelletier/go-toml v1.2.0/go.mod h1:5z9KED0ma1S8pY6P1sdut58dfprrGBbd/94hg7ilaic=
 github.com/pelletier/go-toml v1.9.3 h1:zeC5b1GviRUyKYd6OJPvBU/mcVDVoL1OhT17FCt5dSQ=
 github.com/pelletier/go-toml v1.9.3/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
