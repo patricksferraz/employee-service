@@ -13,10 +13,10 @@ func init() {
 
 type Employee struct {
 	Base          `json:",inline" valid:"required"`
-	Username      string        `json:"username,omitempty" valid:"notnull"`
-	FirstName     string        `json:"first_name,omitempty" valid:"notnull"`
-	LastName      string        `json:"last_name,omitempty" valid:"notnull"`
-	Email         string        `json:"email,omitempty" valid:"notnull"`
+	Username      string        `json:"username,omitempty" valid:"required"`
+	FirstName     string        `json:"first_name,omitempty" valid:"alpha,required"`
+	LastName      string        `json:"last_name,omitempty" valid:"alpha,required"`
+	Email         string        `json:"email,omitempty" valid:"email"`
 	Enabled       bool          `json:"enabled,omitempty" valid:"-"`
 	EmailVerified bool          `json:"email_verified,omitempty" valid:"-"`
 	Attributes    *EmployeeAttr `json:"attributes,omitempty" valid:"-"`

@@ -36,7 +36,7 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	e, err := s.EmployeeService.CreateEmployee(
+	employee, err := s.EmployeeService.CreateEmployee(
 		ctx,
 		json.Username,
 		json.FirstName,
@@ -50,20 +50,6 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 		ctx.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
 		return
 	}
-
-	employee := &Employee{
-		Username:      e.Username,
-		FirstName:     e.FirstName,
-		LastName:      e.LastName,
-		Email:         e.Email,
-		Enabled:       e.Enabled,
-		EmailVerified: e.EmailVerified,
-		Attributes: &EmployeeAttr{
-			Pis: e.Attributes.Pis[0],
-		},
-	}
-	employee.ID = e.ID
-	employee.CreatedAt = e.CreatedAt
 
 	ctx.JSON(http.StatusOK, employee)
 }

@@ -31,12 +31,7 @@ func (r *KeycloakEmployeeRepository) CreateEmployee(ctx context.Context, employe
 		Enabled:          &employee.Enabled,
 		EmailVerified:    &employee.EmailVerified,
 	}
-
-	attr, err := utils.Struct2Attr(employee.Attributes)
-	if err != nil {
-		return err
-	}
-	user.Attributes = attr
+	user.Attributes = utils.StructToAttr(employee.Attributes)
 
 	token, err := r.K.Client.LoginAdmin(ctx, r.K.Username, r.K.Password, r.K.Realm)
 	if err != nil {

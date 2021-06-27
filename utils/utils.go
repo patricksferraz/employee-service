@@ -1,19 +1,25 @@
 package utils
 
-import "encoding/json"
+import "reflect"
 
-func Struct2Attr(v interface{}) (*map[string][]string, error) {
-	attr := make(map[string][]string)
-
-	_t, err := json.Marshal(v)
-	if err != nil {
-		return nil, err
+func StructToAttr(item interface{}) *map[string][]string {
+	res := make(map[string][]string)
+	if item == nil {
+		return &res
 	}
+	v := reflect.TypeOf(item)
+	reflectValue := reflect.ValueOf(item)
+	reflectValue = reflect.Indirect(reflectValue)
 
-	err = json.Unmarshal(_t, &attr)
-	if err != nil {
-		return nil, err
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
 	}
-
-	return &attr, nil
+	for i := 0; i < v.NumField(); i++ {
+		tag := v.Field(i).Tag.Get("attr")
+		field := reflectValue.Field(i).Interface()
+		if v, ok := field.(string); ok {
+			res[tag] = []string{v}
+		}
+	}
+	return &res
 }

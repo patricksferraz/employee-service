@@ -9,13 +9,13 @@ func init() {
 }
 
 type EmployeeAttr struct {
-	Pis []string `json:"pis,omitempty" valid:"required"`
+	Pis string `json:"pis,omitempty" valid:"required"`
 }
 
 func NewEmployeeAttr(pis string) (*EmployeeAttr, error) {
 
 	e := &EmployeeAttr{
-		Pis: []string{pis},
+		Pis: pis,
 	}
 
 	err := e.isValid()
