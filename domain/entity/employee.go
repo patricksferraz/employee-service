@@ -17,7 +17,7 @@ func init() {
 }
 
 type Employee struct {
-	Base          `valid:"required"`
+	Base          `json:",inline" valid:"required"`
 	Username      string `json:"username,omitempty" valid:"required"`
 	FirstName     string `json:"first_name,omitempty" valid:"alpha,required"`
 	LastName      string `json:"last_name,omitempty" valid:"alpha,required"`
