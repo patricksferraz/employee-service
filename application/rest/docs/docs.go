@@ -65,6 +65,12 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/rest.HTTPError"
                         }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
                     }
                 }
             }
@@ -79,12 +85,10 @@ var doc = `{
                 "enabled",
                 "first_name",
                 "last_name",
+                "pis",
                 "username"
             ],
             "properties": {
-                "attributes": {
-                    "$ref": "#/definitions/rest.EmployeeAttr"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -106,18 +110,10 @@ var doc = `{
                 "last_name": {
                     "type": "string"
                 },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "rest.EmployeeAttr": {
-            "type": "object",
-            "required": [
-                "pis"
-            ],
-            "properties": {
                 "pis": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }

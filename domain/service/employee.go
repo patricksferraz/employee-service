@@ -2,8 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/entity"
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/repository"
@@ -20,8 +18,7 @@ func NewEmployeeService(employeeRepository repository.EmployeeRepositoryInterfac
 }
 
 func (e *EmployeeService) CreateEmployee(ctx context.Context, username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*entity.Employee, error) {
-	employee, err := entity.NewEmployee("", username, firstName, lastName, email, pis, enabled, emailVerified, time.Time{})
-	fmt.Println(employee)
+	employee, err := entity.NewEmployee(username, firstName, lastName, email, pis, enabled, emailVerified)
 	if err != nil {
 		return nil, err
 	}

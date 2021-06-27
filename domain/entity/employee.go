@@ -4,56 +4,44 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
+	pisvalidatior "github.com/patricksferraz/pisvalidator"
 	uuid "github.com/satori/go.uuid"
 )
 
 func init() {
+	govalidator.TagMap["pis"] = govalidator.Validator(func(str string) bool {
+		return pisvalidatior.ValidatePis(str)
+	})
+
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
 type Employee struct {
 	Base          `json:",inline" valid:"required"`
-	Username      string        `json:"username,omitempty" valid:"required"`
-	FirstName     string        `json:"first_name,omitempty" valid:"alpha,required"`
-	LastName      string        `json:"last_name,omitempty" valid:"alpha,required"`
-	Email         string        `json:"email,omitempty" valid:"email"`
-	Enabled       bool          `json:"enabled,omitempty" valid:"-"`
-	EmailVerified bool          `json:"email_verified,omitempty" valid:"-"`
-	Attributes    *EmployeeAttr `json:"attributes,omitempty" valid:"-"`
+	Username      string `json:"username,omitempty" valid:"required"`
+	FirstName     string `json:"first_name,omitempty" valid:"alpha,required"`
+	LastName      string `json:"last_name,omitempty" valid:"alpha,required"`
+	Email         string `json:"email,omitempty" valid:"email"`
+	Pis           string `json:"pis,omitempty" attr:"pis" valid:"pis"`
+	Enabled       bool   `json:"enabled,omitempty" valid:"-"`
+	EmailVerified bool   `json:"email_verified,omitempty" valid:"-"`
 }
 
-func NewEmployee(id, username, firstName, lastName, email, pis string, enabled, emailVerified bool, createdAt time.Time) (*Employee, error) {
+func NewEmployee(username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*Employee, error) {
 
 	employee := &Employee{
 		Username:      username,
 		FirstName:     firstName,
 		LastName:      lastName,
 		Email:         email,
+		Pis:           pis,
 		Enabled:       enabled,
 		EmailVerified: emailVerified,
 	}
+	employee.ID = uuid.NewV4().String()
+	employee.CreatedAt = time.Now()
 
-	attr, err := NewEmployeeAttr(pis)
-	if err != nil {
-		return nil, err
-	}
-
-	employee.Attributes = attr
-
-	if id == "" {
-		employee.ID = uuid.NewV4().String()
-	} else {
-		employee.ID = id
-	}
-
-	if createdAt.IsZero() {
-		employee.CreatedAt = time.Now()
-	} else {
-		employee.CreatedAt = createdAt
-	}
-
-	err = employee.isValid()
-	if err != nil {
+	if err := employee.isValid(); err != nil {
 		return nil, err
 	}
 

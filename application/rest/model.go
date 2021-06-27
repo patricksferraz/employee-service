@@ -7,19 +7,15 @@ type Base struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-type EmployeeAttr struct {
-	Pis string `json:"pis" binding:"required"`
-}
-
 type Employee struct {
 	Base          `json:",inline"`
-	Username      string        `json:"username" binding:"required"`
-	FirstName     string        `json:"first_name" binding:"required"`
-	LastName      string        `json:"last_name" binding:"required"`
-	Email         string        `json:"email" binding:"required"`
-	Enabled       bool          `json:"enabled" binding:"required"`
-	EmailVerified bool          `json:"email_verified" binding:"required"`
-	Attributes    *EmployeeAttr `json:"attributes"`
+	Username      string `json:"username" binding:"required"`
+	FirstName     string `json:"first_name" binding:"required"`
+	LastName      string `json:"last_name" binding:"required"`
+	Email         string `json:"email" binding:"required"`
+	Pis           string `json:"pis" binding:"required"`
+	Enabled       bool   `json:"enabled" binding:"required"`
+	EmailVerified bool   `json:"email_verified" binding:"required"`
 }
 
 type HTTPError struct {

@@ -17,8 +17,10 @@ func StructToAttr(item interface{}) *map[string][]string {
 	for i := 0; i < v.NumField(); i++ {
 		tag := v.Field(i).Tag.Get("attr")
 		field := reflectValue.Field(i).Interface()
-		if v, ok := field.(string); ok {
-			res[tag] = []string{v}
+		if tag != "" && tag != "-" {
+			if v, ok := field.(string); ok {
+				res[tag] = []string{v}
+			}
 		}
 	}
 	return &res
