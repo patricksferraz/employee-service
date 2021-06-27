@@ -1,0 +1,119 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Swagger API for Golang Project Employee.",
+        "title": "Employee Swagger API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Coding4u",
+            "email": "contato@coding4u.com.br"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/api/v1",
+    "paths": {
+        "/employee": {
+            "post": {
+                "description": "create employee",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "summary": "Create a employee",
+                "operationId": "createEmployee",
+                "parameters": [
+                    {
+                        "description": "JSON body to create a new employee",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.Employee"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.Employee"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "rest.Employee": {
+            "type": "object",
+            "required": [
+                "email",
+                "email_verified",
+                "enabled",
+                "first_name",
+                "last_name",
+                "username"
+            ],
+            "properties": {
+                "attributes": {
+                    "$ref": "#/definitions/rest.EmployeeAttr"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "email_verified": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.EmployeeAttr": {
+            "type": "object",
+            "required": [
+                "pis"
+            ],
+            "properties": {
+                "pis": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.HTTPError": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "status bad request"
+                }
+            }
+        }
+    }
+}
