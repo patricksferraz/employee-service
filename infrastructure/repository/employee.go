@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/entity"
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/infrastructure/external"
@@ -44,4 +45,30 @@ func (r *KeycloakEmployeeRepository) CreateEmployee(ctx context.Context, employe
 	employee.ID = employeeID
 
 	return nil
+}
+
+func (r *KeycloakEmployeeRepository) FindEmployee(ctx context.Context, id string) (*entity.Employee, error) {
+	token, err := r.K.Client.LoginAdmin(ctx, r.K.Username, r.K.Password, r.K.Realm)
+	if err != nil {
+		return nil, err
+	}
+
+	e, err := r.K.Client.GetUserByID(ctx, token.AccessToken, r.K.Realm, id)
+	if err != nil {
+		return nil, err
+	}
+
+	employee := &entity.Employee{
+		Username:      *e.Username,
+		FirstName:     *e.FirstName,
+		LastName:      *e.LastName,
+		Email:         *e.Email,
+		Enabled:       *e.Enabled,
+		EmailVerified: *e.EmailVerified,
+		Pis:           (*e.Attributes)["pis"][0],
+	}
+	employee.ID = *e.ID
+	employee.CreatedAt = time.Unix(*e.CreatedTimestamp, 0)
+
+	return employee, nil
 }
