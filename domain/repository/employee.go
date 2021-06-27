@@ -9,4 +9,5 @@ import (
 type EmployeeRepositoryInterface interface {
 	CreateEmployee(ctx context.Context, Employee *entity.Employee) error
 	FindEmployee(ctx context.Context, id string) (*entity.Employee, error)
+	SetPassword(ctx context.Context, pass *entity.Password) error
 }

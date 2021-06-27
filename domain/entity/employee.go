@@ -16,6 +16,8 @@ func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
+type Password string
+
 type Employee struct {
 	Base          `json:",inline" valid:"required"`
 	Username      string `json:"username,omitempty" valid:"required"`

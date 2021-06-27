@@ -38,3 +38,8 @@ func (e *EmployeeService) FindEmployee(ctx context.Context, id string) (*entity.
 	}
 	return employee, nil
 }
+
+func (e *EmployeeService) SetPassword(ctx context.Context, pass *entity.Password) error {
+	err := e.EmployeeRepository.SetPassword(ctx, pass)
+	return err
+}
