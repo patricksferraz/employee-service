@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  employee-service-test:
+    build:
+      context: .
+      dockerfile: .docker/Dockerfile.test
+    networks:
+      - employee
+
+networks:
+  employee:
+    driver: bridge

@@ -1,0 +1,80 @@
+basePath: /api/v1
+definitions:
+  rest.Employee:
+    properties:
+      attributes:
+        $ref: '#/definitions/rest.EmployeeAttr'
+      created_at:
+        type: string
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      enabled:
+        type: boolean
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - email_verified
+    - enabled
+    - first_name
+    - last_name
+    - username
+    type: object
+  rest.EmployeeAttr:
+    properties:
+      pis:
+        type: string
+    required:
+    - pis
+    type: object
+  rest.HTTPError:
+    properties:
+      error:
+        example: status bad request
+        type: string
+    type: object
+info:
+  contact:
+    email: contato@coding4u.com.br
+    name: Coding4u
+  description: Swagger API for Golang Project Employee.
+  termsOfService: http://swagger.io/terms/
+  title: Employee Swagger API
+  version: "1.0"
+paths:
+  /employees:
+    post:
+      consumes:
+      - application/json
+      description: create employee
+      operationId: createEmployee
+      parameters:
+      - description: JSON body to create a new employee
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.Employee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.Employee'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+      summary: Create a employee
+      tags:
+      - Employee
+swagger: "2.0"
