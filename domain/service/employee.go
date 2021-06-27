@@ -30,3 +30,11 @@ func (e *EmployeeService) CreateEmployee(ctx context.Context, username, firstNam
 
 	return employee, nil
 }
+
+func (e *EmployeeService) FindEmployee(ctx context.Context, id string) (*entity.Employee, error) {
+	employee, err := e.EmployeeRepository.FindEmployee(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return employee, nil
+}
