@@ -27,6 +27,7 @@ func NewEmployeeRestService(service *service.EmployeeService) *EmployeeRestServi
 // @Param body body Employee true "JSON body to create a new employee"
 // @Success 200 {object} Employee
 // @Failure 401 {object} HTTPError
+// @Failure 403 {object} HTTPError
 // @Router /employees [post]
 func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 	var json Employee
@@ -42,7 +43,7 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 		json.FirstName,
 		json.LastName,
 		json.Email,
-		json.Attributes.Pis,
+		json.Pis,
 		json.Enabled,
 		json.EmailVerified,
 	)

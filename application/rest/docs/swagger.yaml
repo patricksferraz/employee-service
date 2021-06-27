@@ -2,8 +2,6 @@ basePath: /api/v1
 definitions:
   rest.Employee:
     properties:
-      attributes:
-        $ref: '#/definitions/rest.EmployeeAttr'
       created_at:
         type: string
       email:
@@ -18,6 +16,8 @@ definitions:
         type: string
       last_name:
         type: string
+      pis:
+        type: string
       username:
         type: string
     required:
@@ -26,14 +26,8 @@ definitions:
     - enabled
     - first_name
     - last_name
-    - username
-    type: object
-  rest.EmployeeAttr:
-    properties:
-      pis:
-        type: string
-    required:
     - pis
+    - username
     type: object
   rest.HTTPError:
     properties:
@@ -72,6 +66,10 @@ paths:
             $ref: '#/definitions/rest.Employee'
         "401":
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+        "403":
+          description: Forbidden
           schema:
             $ref: '#/definitions/rest.HTTPError'
       summary: Create a employee

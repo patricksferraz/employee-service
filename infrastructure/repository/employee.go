@@ -20,31 +20,28 @@ func NewKeycloakEmployeeRepository(keycloak *external.Keycloak) *KeycloakEmploye
 }
 
 func (r *KeycloakEmployeeRepository) CreateEmployee(ctx context.Context, employee *entity.Employee) error {
-	createdAt := employee.CreatedAt.Unix()
 	user := gocloak.User{
-		ID:               &employee.ID,
-		CreatedTimestamp: &createdAt,
-		Username:         &employee.Username,
-		FirstName:        &employee.FirstName,
-		LastName:         &employee.LastName,
-		Email:            &employee.Email,
-		Enabled:          &employee.Enabled,
-		EmailVerified:    &employee.EmailVerified,
+		Username:      &employee.Username,
+		FirstName:     &employee.FirstName,
+		LastName:      &employee.LastName,
+		Email:         &employee.Email,
+		Enabled:       &employee.Enabled,
+		EmailVerified: &employee.EmailVerified,
 	}
-	user.Attributes = utils.StructToAttr(employee.Attributes)
+	user.Attributes = utils.StructToAttr(employee)
 
 	token, err := r.K.Client.LoginAdmin(ctx, r.K.Username, r.K.Password, r.K.Realm)
 	if err != nil {
 		return err
 	}
 
-	// TODO: check if session is ended
 	defer r.K.Client.LogoutUserSession(ctx, token.AccessToken, r.K.Realm, token.SessionState)
 
-	_, err = r.K.Client.CreateUser(ctx, token.AccessToken, r.K.Realm, user)
+	employeeID, err := r.K.Client.CreateUser(ctx, token.AccessToken, r.K.Realm, user)
 	if err != nil {
 		return err
 	}
+	employee.ID = employeeID
 
 	return nil
 }
