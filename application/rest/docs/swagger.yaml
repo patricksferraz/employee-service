@@ -31,6 +31,9 @@ definitions:
     type: object
   rest.HTTPError:
     properties:
+      code:
+        example: 400
+        type: integer
       error:
         example: status bad request
         type: string
@@ -72,7 +75,37 @@ paths:
           description: Forbidden
           schema:
             $ref: '#/definitions/rest.HTTPError'
-      summary: Create a employee
+      summary: create a employee
+      tags:
+      - Employee
+  /employees/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Router for find a employee
+      operationId: findEmployee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.Employee'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+      summary: find a employee
       tags:
       - Employee
 swagger: "2.0"
