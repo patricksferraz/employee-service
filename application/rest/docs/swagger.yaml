@@ -38,6 +38,24 @@ definitions:
         example: status bad request
         type: string
     type: object
+  rest.HTTPResponse:
+    properties:
+      code:
+        example: 200
+        type: integer
+      message:
+        example: a message
+        type: string
+    type: object
+  rest.PasswordInfo:
+    properties:
+      password:
+        example: meypassword
+        type: string
+      temporary:
+        example: false
+        type: boolean
+    type: object
 info:
   contact:
     email: contato@coding4u.com.br
@@ -106,6 +124,42 @@ paths:
           schema:
             $ref: '#/definitions/rest.HTTPError'
       summary: find a employee
+      tags:
+      - Employee
+  /employees/{id}/password:
+    put:
+      consumes:
+      - application/json
+      description: Router for set a employee password
+      operationId: setPassword
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: JSON body to set a employee password
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/rest.PasswordInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.HTTPResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/rest.HTTPError'
+      summary: set a employee password
       tags:
       - Employee
 swagger: "2.0"

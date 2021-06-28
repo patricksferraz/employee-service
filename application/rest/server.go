@@ -40,6 +40,7 @@ func StartRestServer(keycloak *external.Keycloak, port int) {
 		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 		v1.POST("/", employeeRestService.CreateEmployee)
 		v1.GET("/:id", employeeRestService.FindEmployee)
+		v1.PUT("/:id/password", employeeRestService.SetPassword)
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)

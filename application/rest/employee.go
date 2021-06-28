@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"net/http"
 
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/service"
@@ -105,7 +104,65 @@ func (s *EmployeeRestService) FindEmployee(ctx *gin.Context) {
 		)
 		return
 	}
-	fmt.Println(employee)
 
 	ctx.JSON(http.StatusOK, employee)
+}
+
+// SetPassword godoc
+// @Summary set a employee password
+// @Description Router for set a employee password
+// @ID setPassword
+// @Tags Employee
+// @Accept json
+// @Produce json
+// @Param id path string true "Employee ID"
+// @Param body body PasswordInfo true "JSON body to set a employee password"
+// @Success 200 {object} HTTPResponse
+// @Failure 400 {object} HTTPError
+// @Failure 403 {object} HTTPError
+// @Router /employees/{id}/password [put]
+func (s *EmployeeRestService) SetPassword(ctx *gin.Context) {
+	var req IDRequest
+	var json PasswordInfo
+
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(
+			http.StatusBadRequest,
+			HTTPError{
+				Code:  http.StatusBadRequest,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	if err := ctx.ShouldBindJSON(&json); err != nil {
+		ctx.JSON(
+			http.StatusBadRequest,
+			HTTPError{
+				Code:  http.StatusBadRequest,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	err := s.EmployeeService.SetPassword(ctx, req.ID, json.Password, json.Temporary)
+	if err != nil {
+		ctx.JSON(
+			http.StatusForbidden,
+			HTTPError{
+				Code:  http.StatusForbidden,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	ctx.JSON(
+		http.StatusOK,
+		HTTPResponse{
+			Code:    http.StatusOK,
+			Message: "password updated successfully"},
+	)
 }

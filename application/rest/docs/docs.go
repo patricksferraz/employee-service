@@ -119,6 +119,60 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/employees/{id}/password": {
+            "put": {
+                "description": "Router for set a employee password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employee"
+                ],
+                "summary": "set a employee password",
+                "operationId": "setPassword",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Employee ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "JSON body to set a employee password",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/rest.PasswordInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/rest.HTTPError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -173,6 +227,32 @@ var doc = `{
                 "error": {
                     "type": "string",
                     "example": "status bad request"
+                }
+            }
+        },
+        "rest.HTTPResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "message": {
+                    "type": "string",
+                    "example": "a message"
+                }
+            }
+        },
+        "rest.PasswordInfo": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "meypassword"
+                },
+                "temporary": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         }
