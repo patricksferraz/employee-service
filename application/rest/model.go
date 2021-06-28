@@ -26,3 +26,13 @@ type HTTPError struct {
 type IDRequest struct {
 	ID string `uri:"id" binding:"required,uuid"`
 }
+
+type HTTPResponse struct {
+	Code    int    `json:"code,omitempty" example:"200"`
+	Message string `json:"message,omitempty" example:"a message"`
+}
+
+type PasswordInfo struct {
+	Password  string `json:"password" example:"mypassword"`
+	Temporary bool   `json:"temporary" example:"false"`
+}
