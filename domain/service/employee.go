@@ -39,7 +39,12 @@ func (e *EmployeeService) FindEmployee(ctx context.Context, id string) (*entity.
 	return employee, nil
 }
 
-func (e *EmployeeService) SetPassword(ctx context.Context, pass *entity.Password) error {
-	err := e.EmployeeRepository.SetPassword(ctx, pass)
+func (e *EmployeeService) SetPassword(ctx context.Context, employeeID string, password string, temporary bool) error {
+	pass, err := entity.NewPasswordInfo(password, temporary)
+	if err != nil {
+		return err
+	}
+
+	err = e.EmployeeRepository.SetPassword(ctx, employeeID, pass)
 	return err
 }

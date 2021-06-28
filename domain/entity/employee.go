@@ -16,7 +16,18 @@ func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
-type Password string
+type PasswordInfo struct {
+	Password  string
+	Temporary bool
+}
+
+func NewPasswordInfo(password string, temporary bool) (*PasswordInfo, error) {
+	pass := &PasswordInfo{
+		Password:  password,
+		Temporary: temporary,
+	}
+	return pass, nil
+}
 
 type Employee struct {
 	Base          `json:",inline" valid:"required"`
