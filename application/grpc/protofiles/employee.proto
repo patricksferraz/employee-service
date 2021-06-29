@@ -14,6 +14,10 @@ message CreateEmployeeResponse {
     string id = 1;
 }
 
+message FindEmployeeRequest {
+    string employee_id = 1;
+}
+
 message Employee {
     string id = 1;
     string username = 2;
@@ -28,4 +32,5 @@ message Employee {
 
 service EmployeeService {
     rpc CreateEmployee (CreateEmployeeRequest) returns (CreateEmployeeResponse);
+    rpc FindEmployee (FindEmployeeRequest) returns (Employee);
 }
