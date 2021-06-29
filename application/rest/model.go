@@ -23,8 +23,8 @@ type HTTPError struct {
 	Error string `json:"error,omitempty" example:"status bad request"`
 }
 
-type IDRequest struct {
-	ID string `uri:"id" binding:"required,uuid"`
+type ID struct {
+	ID string `json:"id" uri:"id" binding:"required,uuid"`
 }
 
 type HTTPResponse struct {

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package dev.azure.com.c4ut.TimeClock;
+
+option go_package = "/protofiles;pb";
+
+message CreateEmployeeRequest {
+    string username = 1;
+    string first_name = 2;
+    string last_name = 3;
+    string email = 4;
+    string pis = 5;
+    bool enabled = 6;
+    bool email_verified = 7;
+}
+
+message CreateEmployeeResponse {
+    string id = 1;
+}
+
+service EmployeeService {
+    rpc CreateEmployee (CreateEmployeeRequest) returns (CreateEmployeeResponse);
+}

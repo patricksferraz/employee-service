@@ -25,7 +25,7 @@ func NewEmployeeRestService(service *service.EmployeeService) *EmployeeRestServi
 // @Accept json
 // @Produce json
 // @Param body body Employee true "JSON body to create a new employee"
-// @Success 200 {object} Employee
+// @Success 200 {object} ID
 // @Failure 401 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees [post]
@@ -43,7 +43,7 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	employee, err := s.EmployeeService.CreateEmployee(
+	id, err := s.EmployeeService.CreateEmployee(
 		ctx,
 		json.Username,
 		json.FirstName,
@@ -64,7 +64,7 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, employee)
+	ctx.JSON(http.StatusOK, ID{ID: *id})
 }
 
 // FindEmployee godoc
@@ -80,7 +80,7 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 // @Failure 403 {object} HTTPError
 // @Router /employees/{id} [get]
 func (s *EmployeeRestService) FindEmployee(ctx *gin.Context) {
-	var req IDRequest
+	var req ID
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(
@@ -122,7 +122,7 @@ func (s *EmployeeRestService) FindEmployee(ctx *gin.Context) {
 // @Failure 403 {object} HTTPError
 // @Router /employees/{id}/password [put]
 func (s *EmployeeRestService) SetPassword(ctx *gin.Context) {
-	var req IDRequest
+	var req ID
 	var json PasswordInfo
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
