@@ -21,7 +21,7 @@ func NewKeycloakEmployeeRepository(keycloak *external.Keycloak) *KeycloakEmploye
 	}
 }
 
-func (r *KeycloakEmployeeRepository) CreateEmployee(ctx context.Context, employee *entity.Employee) error {
+func (r *KeycloakEmployeeRepository) CreateEmployee(ctx context.Context, employee *entity.Employee) (*string, error) {
 	user := gocloak.User{
 		Username:      &employee.Username,
 		FirstName:     &employee.FirstName,
@@ -34,17 +34,16 @@ func (r *KeycloakEmployeeRepository) CreateEmployee(ctx context.Context, employe
 
 	token, err := r.K.Client.LoginAdmin(ctx, r.K.Username, r.K.Password, r.K.Realm)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer r.K.Client.LogoutUserSession(ctx, token.AccessToken, r.K.Realm, token.SessionState)
 
 	employeeID, err := r.K.Client.CreateUser(ctx, token.AccessToken, r.K.Realm, user)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	employee.ID = employeeID
 
-	return nil
+	return &employeeID, nil
 }
 
 func (r *KeycloakEmployeeRepository) FindEmployee(ctx context.Context, id string) (*entity.Employee, error) {

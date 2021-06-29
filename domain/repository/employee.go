@@ -7,7 +7,7 @@ import (
 )
 
 type EmployeeRepositoryInterface interface {
-	CreateEmployee(ctx context.Context, Employee *entity.Employee) error
+	CreateEmployee(ctx context.Context, Employee *entity.Employee) (*string, error)
 	FindEmployee(ctx context.Context, id string) (*entity.Employee, error)
 	SetPassword(ctx context.Context, employeeID string, pass *entity.PasswordInfo) error
 }

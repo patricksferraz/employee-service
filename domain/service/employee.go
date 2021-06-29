@@ -17,18 +17,18 @@ func NewEmployeeService(employeeRepository repository.EmployeeRepositoryInterfac
 	}
 }
 
-func (e *EmployeeService) CreateEmployee(ctx context.Context, username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*entity.Employee, error) {
+func (e *EmployeeService) CreateEmployee(ctx context.Context, username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*string, error) {
 	employee, err := entity.NewEmployee(username, firstName, lastName, email, pis, enabled, emailVerified)
 	if err != nil {
 		return nil, err
 	}
 
-	err = e.EmployeeRepository.CreateEmployee(ctx, employee)
+	id, err := e.EmployeeRepository.CreateEmployee(ctx, employee)
 	if err != nil {
 		return nil, err
 	}
 
-	return employee, nil
+	return id, nil
 }
 
 func (e *EmployeeService) FindEmployee(ctx context.Context, id string) (*entity.Employee, error) {
