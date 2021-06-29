@@ -30,6 +30,11 @@ var doc = `{
     "paths": {
         "/employees": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "create employee",
                 "consumes": [
                     "application/json"
@@ -77,6 +82,11 @@ var doc = `{
         },
         "/employees/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Router for find a employee",
                 "consumes": [
                     "application/json"
@@ -122,6 +132,11 @@ var doc = `{
         },
         "/employees/{id}/password": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Router for set a employee password",
                 "consumes": [
                     "application/json"
@@ -266,6 +281,13 @@ var doc = `{
                     "example": false
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

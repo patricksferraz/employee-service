@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"dev.azure.com/c4ut/TimeClock/_git/employee-service/application/grpc/pb"
 	_ "dev.azure.com/c4ut/TimeClock/_git/employee-service/application/rest/docs"
 	_service "dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/service"
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/infrastructure/external"
@@ -24,13 +25,20 @@ import (
 // @contact.email contato@coding4u.com.br
 
 // @BasePath /api/v1
-func StartRestServer(keycloak *external.Keycloak, port int) {
+// @query.collection.format multi
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+func StartRestServer(keycloak *external.Keycloak, service pb.AuthServiceClient, port int) {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(cors.Default())
 	r.Use(apmgin.Middleware(r))
 
+	authService := _service.NewAuthService(service)
+	authMiddlerare := NewAuthMiddleware(authService)
 	employeeRepository := repository.NewKeycloakEmployeeRepository(keycloak)
 	employeeService := _service.NewEmployeeService(employeeRepository)
 	employeeRestService := NewEmployeeRestService(employeeService)
@@ -38,9 +46,12 @@ func StartRestServer(keycloak *external.Keycloak, port int) {
 	v1 := r.Group("api/v1/employees")
 	{
 		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		v1.POST("/", employeeRestService.CreateEmployee)
-		v1.GET("/:id", employeeRestService.FindEmployee)
-		v1.PUT("/:id/password", employeeRestService.SetPassword)
+		authorized := v1.Group("/", authMiddlerare.Require())
+		{
+			authorized.POST("/", employeeRestService.CreateEmployee)
+			authorized.GET("/:id", employeeRestService.FindEmployee)
+			authorized.PUT("/:id/password", employeeRestService.SetPassword)
+		}
 	}
 
 	addr := fmt.Sprintf("0.0.0.0:%d", port)

@@ -16,6 +16,10 @@ limitations under the License.
 package cmd
 
 import (
+	"log"
+	"os"
+
+	"dev.azure.com/c4ut/TimeClock/_git/employee-service/application/grpc/pb"
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/application/rest"
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/infrastructure/external"
 	"github.com/spf13/cobra"
@@ -30,8 +34,17 @@ func NewRestCmd() *cobra.Command {
 		Short: "Run rest Service",
 
 		Run: func(cmd *cobra.Command, args []string) {
+			authServiceAddr := os.Getenv("AUTH_SERVICE_ADDR")
+			conn, err := external.ConnectAuthService(authServiceAddr)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			defer conn.Close()
+			authService := pb.NewAuthServiceClient(conn)
+
 			keycloak := external.ConnectKeycloak()
-			rest.StartRestServer(keycloak, restPort)
+			rest.StartRestServer(keycloak, authService, restPort)
 		},
 	}
 

@@ -100,6 +100,8 @@ paths:
           description: Forbidden
           schema:
             $ref: '#/definitions/rest.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: create a employee
       tags:
       - Employee
@@ -130,6 +132,8 @@ paths:
           description: Forbidden
           schema:
             $ref: '#/definitions/rest.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: find a employee
       tags:
       - Employee
@@ -166,7 +170,14 @@ paths:
           description: Forbidden
           schema:
             $ref: '#/definitions/rest.HTTPError'
+      security:
+      - ApiKeyAuth: []
       summary: set a employee password
       tags:
       - Employee
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
