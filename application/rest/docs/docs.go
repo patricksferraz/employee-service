@@ -57,7 +57,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.Employee"
+                            "$ref": "#/definitions/rest.ID"
                         }
                     },
                     "401": {
@@ -243,12 +243,23 @@ var doc = `{
                 }
             }
         },
+        "rest.ID": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
         "rest.PasswordInfo": {
             "type": "object",
             "properties": {
                 "password": {
                     "type": "string",
-                    "example": "meypassword"
+                    "example": "mypassword"
                 },
                 "temporary": {
                     "type": "boolean",

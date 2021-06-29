@@ -24,7 +24,7 @@ type HTTPError struct {
 }
 
 type ID struct {
-	ID string `uri:"id" binding:"required,uuid"`
+	ID string `json:"id" uri:"id" binding:"required,uuid"`
 }
 
 type HTTPResponse struct {

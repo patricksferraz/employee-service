@@ -47,10 +47,17 @@ definitions:
         example: a message
         type: string
     type: object
+  rest.ID:
+    properties:
+      id:
+        type: string
+    required:
+    - id
+    type: object
   rest.PasswordInfo:
     properties:
       password:
-        example: meypassword
+        example: mypassword
         type: string
       temporary:
         example: false
@@ -84,7 +91,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.Employee'
+            $ref: '#/definitions/rest.ID'
         "401":
           description: Unauthorized
           schema:
