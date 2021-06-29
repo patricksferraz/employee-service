@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EmployeeServiceClient interface {
 	CreateEmployee(ctx context.Context, in *CreateEmployeeRequest, opts ...grpc.CallOption) (*CreateEmployeeResponse, error)
+	FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*Employee, error)
 }
 
 type employeeServiceClient struct {
@@ -38,11 +39,21 @@ func (c *employeeServiceClient) CreateEmployee(ctx context.Context, in *CreateEm
 	return out, nil
 }
 
+func (c *employeeServiceClient) FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*Employee, error) {
+	out := new(Employee)
+	err := c.cc.Invoke(ctx, "/dev.azure.com.c4ut.TimeClock.EmployeeService/FindEmployee", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EmployeeServiceServer is the server API for EmployeeService service.
 // All implementations must embed UnimplementedEmployeeServiceServer
 // for forward compatibility
 type EmployeeServiceServer interface {
 	CreateEmployee(context.Context, *CreateEmployeeRequest) (*CreateEmployeeResponse, error)
+	FindEmployee(context.Context, *FindEmployeeRequest) (*Employee, error)
 	mustEmbedUnimplementedEmployeeServiceServer()
 }
 
@@ -52,6 +63,9 @@ type UnimplementedEmployeeServiceServer struct {
 
 func (UnimplementedEmployeeServiceServer) CreateEmployee(context.Context, *CreateEmployeeRequest) (*CreateEmployeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEmployee not implemented")
+}
+func (UnimplementedEmployeeServiceServer) FindEmployee(context.Context, *FindEmployeeRequest) (*Employee, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindEmployee not implemented")
 }
 func (UnimplementedEmployeeServiceServer) mustEmbedUnimplementedEmployeeServiceServer() {}
 
@@ -84,6 +98,24 @@ func _EmployeeService_CreateEmployee_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EmployeeService_FindEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindEmployeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EmployeeServiceServer).FindEmployee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dev.azure.com.c4ut.TimeClock.EmployeeService/FindEmployee",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EmployeeServiceServer).FindEmployee(ctx, req.(*FindEmployeeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EmployeeService_ServiceDesc is the grpc.ServiceDesc for EmployeeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -94,6 +126,10 @@ var EmployeeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateEmployee",
 			Handler:    _EmployeeService_CreateEmployee_Handler,
+		},
+		{
+			MethodName: "FindEmployee",
+			Handler:    _EmployeeService_FindEmployee_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
