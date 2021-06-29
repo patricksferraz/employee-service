@@ -19,7 +19,16 @@ func NewEmployeeGrpcService(service *service.EmployeeService) *EmployeeGrpcServi
 }
 
 func (s *EmployeeGrpcService) CreateEmployee(ctx context.Context, in *pb.CreateEmployeeRequest) (*pb.CreateEmployeeResponse, error) {
-	id, err := s.EmployeeService.CreateEmployee(ctx, in.Username, in.FirstName, in.LastName, in.Email, in.Pis, in.Enabled, in.EmailVerified)
+	id, err := s.EmployeeService.CreateEmployee(
+		ctx,
+		in.Employee.Username,
+		in.Employee.FirstName,
+		in.Employee.LastName,
+		in.Employee.Email,
+		in.Employee.Pis,
+		in.Employee.Enabled,
+		in.Employee.EmailVerified,
+	)
 	if err != nil {
 		return &pb.CreateEmployeeResponse{}, err
 	}

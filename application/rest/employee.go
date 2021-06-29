@@ -18,6 +18,7 @@ func NewEmployeeRestService(service *service.EmployeeService) *EmployeeRestServi
 }
 
 // CreateEmployee godoc
+// @Security ApiKeyAuth
 // @Summary create a employee
 // @Description create employee
 // @ID createEmployee
@@ -68,6 +69,7 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 }
 
 // FindEmployee godoc
+// @Security ApiKeyAuth
 // @Summary find a employee
 // @Description Router for find a employee
 // @ID findEmployee
@@ -109,6 +111,7 @@ func (s *EmployeeRestService) FindEmployee(ctx *gin.Context) {
 }
 
 // SetPassword godoc
+// @Security ApiKeyAuth
 // @Summary set a employee password
 // @Description Router for set a employee password
 // @ID setPassword
