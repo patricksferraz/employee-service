@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type EmployeeServiceClient interface {
 	CreateEmployee(ctx context.Context, in *CreateEmployeeRequest, opts ...grpc.CallOption) (*CreateEmployeeResponse, error)
 	FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*Employee, error)
+	SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 }
 
 type employeeServiceClient struct {
@@ -48,12 +49,22 @@ func (c *employeeServiceClient) FindEmployee(ctx context.Context, in *FindEmploy
 	return out, nil
 }
 
+func (c *employeeServiceClient) SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+	out := new(StatusResponse)
+	err := c.cc.Invoke(ctx, "/dev.azure.com.c4ut.TimeClock.EmployeeService/SetPassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EmployeeServiceServer is the server API for EmployeeService service.
 // All implementations must embed UnimplementedEmployeeServiceServer
 // for forward compatibility
 type EmployeeServiceServer interface {
 	CreateEmployee(context.Context, *CreateEmployeeRequest) (*CreateEmployeeResponse, error)
 	FindEmployee(context.Context, *FindEmployeeRequest) (*Employee, error)
+	SetPassword(context.Context, *SetPasswordRequest) (*StatusResponse, error)
 	mustEmbedUnimplementedEmployeeServiceServer()
 }
 
@@ -66,6 +77,9 @@ func (UnimplementedEmployeeServiceServer) CreateEmployee(context.Context, *Creat
 }
 func (UnimplementedEmployeeServiceServer) FindEmployee(context.Context, *FindEmployeeRequest) (*Employee, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindEmployee not implemented")
+}
+func (UnimplementedEmployeeServiceServer) SetPassword(context.Context, *SetPasswordRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetPassword not implemented")
 }
 func (UnimplementedEmployeeServiceServer) mustEmbedUnimplementedEmployeeServiceServer() {}
 
@@ -116,6 +130,24 @@ func _EmployeeService_FindEmployee_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EmployeeService_SetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EmployeeServiceServer).SetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dev.azure.com.c4ut.TimeClock.EmployeeService/SetPassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EmployeeServiceServer).SetPassword(ctx, req.(*SetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EmployeeService_ServiceDesc is the grpc.ServiceDesc for EmployeeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,6 +162,10 @@ var EmployeeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindEmployee",
 			Handler:    _EmployeeService_FindEmployee_Handler,
+		},
+		{
+			MethodName: "SetPassword",
+			Handler:    _EmployeeService_SetPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -5,6 +5,8 @@ import (
 
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/application/grpc/pb"
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/service"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -53,5 +55,19 @@ func (s *EmployeeGrpcService) FindEmployee(ctx context.Context, in *pb.FindEmplo
 		Enabled:       employee.Enabled,
 		EmailVerified: employee.EmailVerified,
 		CreatedAt:     timestamppb.New(employee.CreatedAt),
+	}, nil
+}
+
+func (s *EmployeeGrpcService) SetPassword(ctx context.Context, in *pb.SetPasswordRequest) (*pb.StatusResponse, error) {
+	err := s.EmployeeService.SetPassword(ctx, in.EmployeeId, in.Password, in.Temporary)
+	if err != nil {
+		return &pb.StatusResponse{
+			Code:  uint32(status.Code(err)),
+			Error: err.Error(),
+		}, err
+	}
+	return &pb.StatusResponse{
+		Code:    uint32(codes.OK),
+		Message: "password updated successfully",
 	}, nil
 }
