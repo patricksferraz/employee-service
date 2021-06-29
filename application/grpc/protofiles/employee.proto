@@ -30,7 +30,20 @@ message Employee {
     google.protobuf.Timestamp created_at = 9;
 }
 
+message SetPasswordRequest {
+    string employee_id = 1;
+    string password = 2;
+    bool temporary = 3;
+}
+
+message StatusResponse {
+    uint32 code = 1;
+    string message = 2;
+    string error = 3;
+}
+
 service EmployeeService {
     rpc CreateEmployee (CreateEmployeeRequest) returns (CreateEmployeeResponse);
     rpc FindEmployee (FindEmployeeRequest) returns (Employee);
+    rpc SetPassword (SetPasswordRequest) returns (StatusResponse);
 }
