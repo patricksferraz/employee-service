@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: employee
+  template:
+    metadata:
+      labels:
+        app: employee
+    spec:
+      containers:
+      - name: employee
+        image: coding4u.azurecr.io/employee-service
+        ports:
+        - name: grpc
+          containerPort: 50051
+        - name: rest
+          containerPort: 8080
+        envFrom:
+          - secretRef:
+              name: employee-secret
+          - configMapRef:
+              name: employee-conf
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+
+      imagePullSecrets:
+        - name: regcred
