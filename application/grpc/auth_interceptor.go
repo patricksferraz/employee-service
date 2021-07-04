@@ -57,13 +57,15 @@ func (a *AuthInterceptor) authorize(ctx context.Context, method string) error {
 
 	a.Claims = claims
 
-	for _, role := range claims.Roles {
-		if role == method {
-			return nil
-		}
-	}
+	// TODO: adds roles standard
+	// for _, role := range claims.Roles {
+	// 	if role == method {
+	// 		return nil
+	// 	}
+	// }
 
-	return status.Error(codes.PermissionDenied, "no permission to access this RPC")
+	// return status.Error(codes.PermissionDenied, "no permission to access this RPC")
+	return nil
 }
 
 func NewAuthInterceptor(authService *service.AuthService) *AuthInterceptor {
