@@ -34,7 +34,13 @@ func StartRestServer(keycloak *external.Keycloak, service pb.AuthServiceClient, 
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	r.Use(cors.Default())
+	r.Use(cors.New(cors.Config{
+		AllowMethods:     []string{"POST", "OPTIONS", "GET", "PUT"},
+		AllowHeaders:     []string{"Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "Accept", "Origin", "Cache-Control", "X-Requested-With"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowAllOrigins:  true,
+		AllowCredentials: true,
+	}))
 	r.Use(apmgin.Middleware(r))
 
 	authService := _service.NewAuthService(service)
@@ -46,9 +52,9 @@ func StartRestServer(keycloak *external.Keycloak, service pb.AuthServiceClient, 
 	v1 := r.Group("api/v1/employees")
 	{
 		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		authorized := v1.Group("/", authMiddlerare.Require())
+		authorized := v1.Group("", authMiddlerare.Require())
 		{
-			authorized.POST("/", employeeRestService.CreateEmployee)
+			authorized.POST("", employeeRestService.CreateEmployee)
 			authorized.GET("/:id", employeeRestService.FindEmployee)
 			authorized.PUT("/:id/password", employeeRestService.SetPassword)
 		}
