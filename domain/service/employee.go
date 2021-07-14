@@ -48,3 +48,17 @@ func (e *EmployeeService) SetPassword(ctx context.Context, employeeID string, pa
 	err = e.EmployeeRepository.SetPassword(ctx, employeeID, pass)
 	return err
 }
+
+func (s *EmployeeService) SearchEmployees(ctx context.Context, firstName, lastName string, pageSize int, pageItems int) ([]*entity.Employee, error) {
+	filter, err := entity.NewFilter(firstName, lastName, pageSize, pageItems)
+	if err != nil {
+		return nil, err
+	}
+
+	employees, err := s.EmployeeRepository.SearchEmployees(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	return employees, nil
+}
