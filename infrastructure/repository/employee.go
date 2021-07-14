@@ -137,3 +137,25 @@ func (r *KeycloakEmployeeRepository) SearchEmployees(ctx context.Context, filter
 
 	return employees, nil
 }
+
+func (r *KeycloakEmployeeRepository) UpdateEmployee(ctx context.Context, employee *entity.Employee) error {
+	token, err := r.K.Client.LoginAdmin(ctx, r.K.Username, r.K.Password, r.K.Realm)
+	if err != nil {
+		return err
+	}
+
+	user := gocloak.User{
+		ID:        &employee.ID,
+		FirstName: &employee.FirstName,
+		LastName:  &employee.LastName,
+		Email:     &employee.Email,
+	}
+	user.Attributes = utils.StructToAttr(employee)
+
+	err = r.K.Client.UpdateUser(ctx, token.AccessToken, r.K.Realm, user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

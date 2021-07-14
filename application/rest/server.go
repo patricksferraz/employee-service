@@ -57,6 +57,7 @@ func StartRestServer(keycloak *external.Keycloak, service pb.AuthServiceClient, 
 			authorized.POST("", employeeRestService.CreateEmployee)
 			authorized.GET("", employeeRestService.SearchEmployees)
 			authorized.GET("/:id", employeeRestService.FindEmployee)
+			authorized.PUT("/:id", employeeRestService.UpdateEmployee)
 			authorized.PUT("/:id/password", employeeRestService.SetPassword)
 		}
 	}

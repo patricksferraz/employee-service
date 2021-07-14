@@ -18,7 +18,7 @@ func NewEmployeeService(employeeRepository repository.EmployeeRepositoryInterfac
 }
 
 func (e *EmployeeService) CreateEmployee(ctx context.Context, username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*string, error) {
-	employee, err := entity.NewEmployee(username, firstName, lastName, email, pis, enabled, emailVerified)
+	employee, err := entity.NewEmployee("", username, firstName, lastName, email, pis, enabled, emailVerified)
 	if err != nil {
 		return nil, err
 	}
@@ -61,4 +61,23 @@ func (s *EmployeeService) SearchEmployees(ctx context.Context, firstName, lastNa
 	}
 
 	return employees, nil
+}
+
+func (e *EmployeeService) UpdateEmployee(ctx context.Context, id, firstName, lastName, email string) error {
+	_e, err := e.EmployeeRepository.FindEmployee(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	employee, err := entity.NewEmployee(_e.ID, _e.Username, firstName, lastName, email, _e.Pis, _e.Enabled, _e.EmailVerified)
+	if err != nil {
+		return err
+	}
+
+	err = e.EmployeeRepository.UpdateEmployee(ctx, employee)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

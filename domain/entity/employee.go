@@ -40,7 +40,7 @@ type Employee struct {
 	EmailVerified bool   `json:"email_verified,omitempty" valid:"-"`
 }
 
-func NewEmployee(username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*Employee, error) {
+func NewEmployee(id, username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*Employee, error) {
 
 	employee := &Employee{
 		Username:      username,
@@ -51,8 +51,13 @@ func NewEmployee(username, firstName, lastName, email, pis string, enabled, emai
 		Enabled:       enabled,
 		EmailVerified: emailVerified,
 	}
-	employee.ID = uuid.NewV4().String()
 	employee.CreatedAt = time.Now()
+
+	if id == "" {
+		employee.ID = uuid.NewV4().String()
+	} else {
+		employee.ID = id
+	}
 
 	if err := employee.isValid(); err != nil {
 		return nil, err
