@@ -43,3 +43,9 @@ type SearchEmployeesRequest struct {
 	PageSize  int    `json:"page_size" form:"page_size" default:"10"`
 	Page      int    `json:"page" form:"page" default:"0"`
 }
+
+type UpdateEmployeeRequest struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+}

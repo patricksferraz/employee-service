@@ -11,4 +11,5 @@ type EmployeeRepositoryInterface interface {
 	FindEmployee(ctx context.Context, id string) (*entity.Employee, error)
 	SetPassword(ctx context.Context, employeeID string, pass *entity.PasswordInfo) error
 	SearchEmployees(ctx context.Context, filter *entity.Filter) ([]*entity.Employee, error)
+	UpdateEmployee(ctx context.Context, employee *entity.Employee) error
 }
