@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/entity"
@@ -58,6 +57,11 @@ func (r *KeycloakEmployeeRepository) FindEmployee(ctx context.Context, id string
 		return nil, err
 	}
 
+	var pis string
+	if e.Attributes != nil {
+		pis = (*e.Attributes)["pis"][0]
+	}
+
 	employee := &entity.Employee{
 		Username:      *e.Username,
 		FirstName:     *e.FirstName,
@@ -65,10 +69,9 @@ func (r *KeycloakEmployeeRepository) FindEmployee(ctx context.Context, id string
 		Email:         *e.Email,
 		Enabled:       *e.Enabled,
 		EmailVerified: *e.EmailVerified,
-		Pis:           (*e.Attributes)["pis"][0],
+		Pis:           pis,
 	}
 	employee.ID = *e.ID
-	fmt.Println(*e.CreatedTimestamp)
 	employee.CreatedAt = time.Unix(0, *e.CreatedTimestamp*int64(time.Millisecond))
 
 	return employee, nil
@@ -87,4 +90,50 @@ func (r *KeycloakEmployeeRepository) SetPassword(ctx context.Context, employeeID
 	}
 
 	return nil
+}
+
+func (r *KeycloakEmployeeRepository) SearchEmployees(ctx context.Context, filter *entity.Filter) ([]*entity.Employee, error) {
+	token, err := r.K.Client.LoginAdmin(ctx, r.K.Username, r.K.Password, r.K.Realm)
+	if err != nil {
+		return nil, err
+	}
+	defer r.K.Client.LogoutUserSession(ctx, token.AccessToken, r.K.Realm, token.SessionState)
+
+	first := filter.Page * filter.PageSize
+	users, err := r.K.Client.GetUsers(
+		ctx,
+		token.AccessToken,
+		r.K.Realm,
+		gocloak.GetUsersParams{
+			FirstName: &filter.FirstName,
+			LastName:  &filter.LastName,
+			First:     &first,
+			Max:       &filter.PageSize,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var employees []*entity.Employee
+	for _, u := range users {
+		var pis string
+		if u.Attributes != nil {
+			pis = (*u.Attributes)["pis"][0]
+		}
+		employee := &entity.Employee{
+			Username:      *u.Username,
+			FirstName:     *u.FirstName,
+			LastName:      *u.LastName,
+			Email:         *u.Email,
+			Pis:           pis,
+			Enabled:       *u.Enabled,
+			EmailVerified: *u.EmailVerified,
+		}
+		employee.ID = *u.ID
+		employee.CreatedAt = time.Unix(0, *u.CreatedTimestamp*int64(time.Millisecond))
+		employees = append(employees, employee)
+	}
+
+	return employees, nil
 }

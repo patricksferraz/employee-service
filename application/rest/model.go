@@ -36,3 +36,10 @@ type PasswordInfo struct {
 	Password  string `json:"password" example:"mypassword"`
 	Temporary bool   `json:"temporary" example:"false"`
 }
+
+type SearchEmployeesRequest struct {
+	FirstName string `json:"first_name" form:"first_name"`
+	LastName  string `json:"last_name" form:"last_name"`
+	PageSize  int    `json:"page_size" form:"page_size" default:"10"`
+	Page      int    `json:"page" form:"page" default:"0"`
+}

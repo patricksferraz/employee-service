@@ -169,3 +169,45 @@ func (s *EmployeeRestService) SetPassword(ctx *gin.Context) {
 			Message: "password updated successfully"},
 	)
 }
+
+// SearchEmployees godoc
+// @Security ApiKeyAuth
+// @Summary search employees by filter
+// @ID searchEmployees
+// @Tags Employee
+// @Description Search for employee employees by `filter`. if the page and page size are empty, 0 and 10 will be considered respectively.
+// @Accept json
+// @Produce json
+// @Param body query SearchEmployeesRequest true "JSON body for search employees"
+// @Success 200 {array} Employee
+// @Failure 400 {object} HTTPError
+// @Failure 403 {object} HTTPError
+// @Router /employees [get]
+func (s *EmployeeRestService) SearchEmployees(ctx *gin.Context) {
+	var body SearchEmployeesRequest
+
+	if err := ctx.ShouldBindQuery(&body); err != nil {
+		ctx.JSON(
+			http.StatusBadRequest,
+			HTTPError{
+				Code:  http.StatusBadRequest,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	employees, err := s.EmployeeService.SearchEmployees(ctx, body.FirstName, body.LastName, body.PageSize, body.Page)
+	if err != nil {
+		ctx.JSON(
+			http.StatusForbidden,
+			HTTPError{
+				Code:  http.StatusForbidden,
+				Error: err.Error(),
+			},
+		)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, employees)
+}
