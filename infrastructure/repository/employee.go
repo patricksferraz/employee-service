@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/entity"
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/infrastructure/external"
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/utils"
 	"github.com/Nerzal/gocloak/v8"
+	"github.com/c-4u/employee-service/domain/entity"
+	"github.com/c-4u/employee-service/infrastructure/external"
+	"github.com/c-4u/employee-service/utils"
 )
 
 type KeycloakEmployeeRepository struct {

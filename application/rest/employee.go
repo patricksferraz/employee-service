@@ -3,7 +3,7 @@ package rest
 import (
 	"net/http"
 
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/service"
+	"github.com/c-4u/employee-service/domain/service"
 	"github.com/gin-gonic/gin"
 )
 

@@ -33,7 +33,7 @@ func NewEmployeeServiceClient(cc grpc.ClientConnInterface) EmployeeServiceClient
 
 func (c *employeeServiceClient) CreateEmployee(ctx context.Context, in *CreateEmployeeRequest, opts ...grpc.CallOption) (*CreateEmployeeResponse, error) {
 	out := new(CreateEmployeeResponse)
-	err := c.cc.Invoke(ctx, "/dev.azure.com.c4ut.TimeClock.EmployeeService/CreateEmployee", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.EmployeeService/CreateEmployee", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (c *employeeServiceClient) CreateEmployee(ctx context.Context, in *CreateEm
 
 func (c *employeeServiceClient) FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*Employee, error) {
 	out := new(Employee)
-	err := c.cc.Invoke(ctx, "/dev.azure.com.c4ut.TimeClock.EmployeeService/FindEmployee", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.EmployeeService/FindEmployee", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *employeeServiceClient) FindEmployee(ctx context.Context, in *FindEmploy
 
 func (c *employeeServiceClient) SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
 	out := new(StatusResponse)
-	err := c.cc.Invoke(ctx, "/dev.azure.com.c4ut.TimeClock.EmployeeService/SetPassword", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.EmployeeService/SetPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +104,7 @@ func _EmployeeService_CreateEmployee_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/dev.azure.com.c4ut.TimeClock.EmployeeService/CreateEmployee",
+		FullMethod: "/github.com.c_4u.EmployeeService/CreateEmployee",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EmployeeServiceServer).CreateEmployee(ctx, req.(*CreateEmployeeRequest))
@@ -122,7 +122,7 @@ func _EmployeeService_FindEmployee_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/dev.azure.com.c4ut.TimeClock.EmployeeService/FindEmployee",
+		FullMethod: "/github.com.c_4u.EmployeeService/FindEmployee",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EmployeeServiceServer).FindEmployee(ctx, req.(*FindEmployeeRequest))
@@ -140,7 +140,7 @@ func _EmployeeService_SetPassword_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/dev.azure.com.c4ut.TimeClock.EmployeeService/SetPassword",
+		FullMethod: "/github.com.c_4u.EmployeeService/SetPassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EmployeeServiceServer).SetPassword(ctx, req.(*SetPasswordRequest))
@@ -152,7 +152,7 @@ func _EmployeeService_SetPassword_Handler(srv interface{}, ctx context.Context, 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var EmployeeService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "dev.azure.com.c4ut.TimeClock.EmployeeService",
+	ServiceName: "github.com.c_4u.EmployeeService",
 	HandlerType: (*EmployeeServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
