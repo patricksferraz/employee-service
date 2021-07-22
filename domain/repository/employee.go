@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/entity"
+	"github.com/c-4u/employee-service/domain/entity"
 )
 
 type EmployeeRepositoryInterface interface {

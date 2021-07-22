@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/application/grpc/pb"
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/entity"
+	"github.com/c-4u/employee-service/application/grpc/pb"
+	"github.com/c-4u/employee-service/domain/entity"
 )
 
 type AuthService struct {

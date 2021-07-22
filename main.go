@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "dev.azure.com/c4ut/TimeClock/_git/employee-service/cmd"
+import "github.com/c-4u/employee-service/cmd"
 
 func main() {
 	cmd.Execute()

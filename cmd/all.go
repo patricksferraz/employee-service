@@ -19,10 +19,10 @@ import (
 	"log"
 	"os"
 
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/application/grpc"
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/application/grpc/pb"
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/application/rest"
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/infrastructure/external"
+	"github.com/c-4u/employee-service/application/grpc"
+	"github.com/c-4u/employee-service/application/grpc/pb"
+	"github.com/c-4u/employee-service/application/rest"
+	"github.com/c-4u/employee-service/infrastructure/external"
 	"github.com/spf13/cobra"
 )
 

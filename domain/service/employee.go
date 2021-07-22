@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/entity"
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/repository"
+	"github.com/c-4u/employee-service/domain/entity"
+	"github.com/c-4u/employee-service/domain/repository"
 )
 
 type EmployeeService struct {

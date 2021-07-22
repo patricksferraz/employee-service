@@ -1,4 +1,4 @@
-module dev.azure.com/c4ut/TimeClock/_git/employee-service
+module github.com/c-4u/employee-service
 
 go 1.16
 

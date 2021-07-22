@@ -5,10 +5,10 @@ import (
 	"log"
 	"net"
 
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/application/grpc/pb"
-	_service "dev.azure.com/c4ut/TimeClock/_git/employee-service/domain/service"
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/infrastructure/external"
-	"dev.azure.com/c4ut/TimeClock/_git/employee-service/infrastructure/repository"
+	"github.com/c-4u/employee-service/application/grpc/pb"
+	_service "github.com/c-4u/employee-service/domain/service"
+	"github.com/c-4u/employee-service/infrastructure/external"
+	"github.com/c-4u/employee-service/infrastructure/repository"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
