@@ -32,8 +32,8 @@ func NewPasswordInfo(password string, temporary bool) (*PasswordInfo, error) {
 type Employee struct {
 	Base          `json:",inline" valid:"required"`
 	Username      string `json:"username,omitempty" valid:"required"`
-	FirstName     string `json:"first_name,omitempty" valid:"alpha,required"`
-	LastName      string `json:"last_name,omitempty" valid:"alpha,required"`
+	FirstName     string `json:"first_name,omitempty" valid:"required"`
+	LastName      string `json:"last_name,omitempty" valid:"required"`
 	Email         string `json:"email,omitempty" valid:"email"`
 	Pis           string `json:"pis,omitempty" attr:"pis" valid:"pis"`
 	Enabled       bool   `json:"enabled,omitempty" valid:"-"`

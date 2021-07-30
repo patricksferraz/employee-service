@@ -2,13 +2,7 @@ package rest
 
 import "time"
 
-type Base struct {
-	ID        string    `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
-type Employee struct {
-	Base          `json:",inline"`
+type EmployeeRequest struct {
 	Username      string `json:"username" binding:"required"`
 	FirstName     string `json:"first_name" binding:"required"`
 	LastName      string `json:"last_name" binding:"required"`
@@ -16,6 +10,12 @@ type Employee struct {
 	Pis           string `json:"pis" binding:"required"`
 	Enabled       bool   `json:"enabled" binding:"required"`
 	EmailVerified bool   `json:"email_verified" binding:"required"`
+}
+
+type EmployeeResponse struct {
+	ID              string    `json:"id"`
+	CreatedAt       time.Time `json:"created_at"`
+	EmployeeRequest `json:",inline"`
 }
 
 type HTTPError struct {
