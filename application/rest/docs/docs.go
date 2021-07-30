@@ -77,7 +77,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/rest.Employee"
+                                "$ref": "#/definitions/rest.EmployeeResponse"
                             }
                         }
                     },
@@ -120,7 +120,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/rest.Employee"
+                            "$ref": "#/definitions/rest.EmployeeRequest"
                         }
                     }
                 ],
@@ -178,7 +178,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.Employee"
+                            "$ref": "#/definitions/rest.EmployeeResponse"
                         }
                     },
                     "400": {
@@ -314,7 +314,42 @@ var doc = `{
         }
     },
     "definitions": {
-        "rest.Employee": {
+        "rest.EmployeeRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "email_verified",
+                "enabled",
+                "first_name",
+                "last_name",
+                "pis",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "email_verified": {
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "pis": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.EmployeeResponse": {
             "type": "object",
             "required": [
                 "email",

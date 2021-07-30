@@ -25,13 +25,13 @@ func NewEmployeeRestService(service *service.EmployeeService) *EmployeeRestServi
 // @Tags Employee
 // @Accept json
 // @Produce json
-// @Param body body Employee true "JSON body to create a new employee"
+// @Param body body EmployeeRequest true "JSON body to create a new employee"
 // @Success 200 {object} ID
 // @Failure 401 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees [post]
 func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
-	var json Employee
+	var json EmployeeRequest
 
 	if err := ctx.ShouldBindJSON(&json); err != nil {
 		ctx.JSON(
@@ -77,7 +77,7 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Employee ID"
-// @Success 200 {object} Employee
+// @Success 200 {object} EmployeeResponse
 // @Failure 400 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees/{id} [get]
@@ -179,7 +179,7 @@ func (s *EmployeeRestService) SetPassword(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param body query SearchEmployeesRequest true "JSON body for search employees"
-// @Success 200 {array} Employee
+// @Success 200 {array} EmployeeResponse
 // @Failure 400 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees [get]

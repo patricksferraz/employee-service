@@ -1,6 +1,31 @@
 basePath: /api/v1
 definitions:
-  rest.Employee:
+  rest.EmployeeRequest:
+    properties:
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      enabled:
+        type: boolean
+      first_name:
+        type: string
+      last_name:
+        type: string
+      pis:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - email_verified
+    - enabled
+    - first_name
+    - last_name
+    - pis
+    - username
+    type: object
+  rest.EmployeeResponse:
     properties:
       created_at:
         type: string
@@ -110,7 +135,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/rest.Employee'
+              $ref: '#/definitions/rest.EmployeeResponse'
             type: array
         "400":
           description: Bad Request
@@ -136,7 +161,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/rest.Employee'
+          $ref: '#/definitions/rest.EmployeeRequest'
       produces:
       - application/json
       responses:
@@ -175,7 +200,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.Employee'
+            $ref: '#/definitions/rest.EmployeeResponse'
         "400":
           description: Bad Request
           schema:
