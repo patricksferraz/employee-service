@@ -8,3 +8,4 @@ data:
   KEYCLOAK_BASE_PATH: http://keycloak-http:80
   ELASTIC_APM_SERVER_URL: http://apm-server:8200
   ELASTIC_APM_SERVICE_NAME: employee-service
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9094
