@@ -18,10 +18,14 @@ package cmd
 import (
 	"log"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	"github.com/c-4u/employee-service/application/grpc"
 	"github.com/c-4u/employee-service/application/grpc/pb"
 	"github.com/c-4u/employee-service/infrastructure/external"
+	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
@@ -43,8 +47,24 @@ func NewGrpcCmd() *cobra.Command {
 			defer conn.Close()
 			authService := pb.NewAuthServiceClient(conn)
 
-			keycloak := external.ConnectKeycloak()
-			grpc.StartGrpcServer(keycloak, authService, grpcPort)
+			keycloak := external.ConnectKeycloak(
+				os.Getenv("KEYCLOAK_BASE_PATH"),
+				os.Getenv("KEYCLOAK_REALM"),
+				os.Getenv("KEYCLOAK_REALM_ADMIN_USERNAME"),
+				os.Getenv("KEYCLOAK_REALM_ADMIN_PASSWORD"),
+			)
+
+			deliveryChan := make(chan ckafka.Event)
+			kafka, err := external.NewKafka(
+				os.Getenv("KAFKA_BOOTSTRAP_SERVERS"),
+				deliveryChan,
+			)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			go kafka.DeliveryReport()
+			grpc.StartGrpcServer(grpcPort, keycloak, authService, kafka)
 		},
 	}
 
@@ -54,6 +74,16 @@ func NewGrpcCmd() *cobra.Command {
 }
 
 func init() {
+	_, b, _, _ := runtime.Caller(0)
+	basepath := filepath.Dir(b)
+
+	if os.Getenv("ENV") == "dev" {
+		err := godotenv.Load(basepath + "/../.env")
+		if err != nil {
+			log.Printf("Error loading .env files")
+		}
+	}
+
 	rootCmd.AddCommand(NewGrpcCmd())
 
 	// Here you will define your flags and configuration settings.
