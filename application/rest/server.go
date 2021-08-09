@@ -30,7 +30,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func StartRestServer(keycloak *external.Keycloak, service pb.AuthKeycloakAclClient, port int) {
+func StartRestServer(port int, keycloak *external.Keycloak, service pb.AuthKeycloakAclClient, kafka *external.Kafka) {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -46,7 +46,8 @@ func StartRestServer(keycloak *external.Keycloak, service pb.AuthKeycloakAclClie
 	authService := _service.NewAuthService(service)
 	authMiddlerare := NewAuthMiddleware(authService)
 	employeeRepository := repository.NewKeycloakEmployeeRepository(keycloak)
-	employeeService := _service.NewEmployeeService(employeeRepository)
+	kafkaRepository := repository.NewKafkaRepository(kafka)
+	employeeService := _service.NewEmployeeService(employeeRepository, kafkaRepository)
 	employeeRestService := NewEmployeeRestService(employeeService)
 
 	v1 := r.Group("api/v1/employees")

@@ -5,47 +5,65 @@ import (
 
 	"github.com/c-4u/employee-service/domain/entity"
 	"github.com/c-4u/employee-service/domain/repository"
+	"github.com/c-4u/employee-service/infrastructure/external/topic"
 )
 
 type EmployeeService struct {
 	EmployeeRepository repository.EmployeeRepositoryInterface
+	EventRepository    repository.EventRepositoryInterface
 }
 
-func NewEmployeeService(employeeRepository repository.EmployeeRepositoryInterface) *EmployeeService {
+func NewEmployeeService(employeeRepository repository.EmployeeRepositoryInterface, eventRepository repository.EventRepositoryInterface) *EmployeeService {
 	return &EmployeeService{
 		EmployeeRepository: employeeRepository,
+		EventRepository:    eventRepository,
 	}
 }
 
-func (e *EmployeeService) CreateEmployee(ctx context.Context, username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*string, error) {
+func (s *EmployeeService) CreateEmployee(ctx context.Context, username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*string, error) {
 	employee, err := entity.NewEmployee("", username, firstName, lastName, email, pis, enabled, emailVerified)
 	if err != nil {
 		return nil, err
 	}
 
-	id, err := e.EmployeeRepository.CreateEmployee(ctx, employee)
+	err = s.EmployeeRepository.CreateEmployee(ctx, employee)
 	if err != nil {
 		return nil, err
 	}
 
-	return id, nil
+	event, err := entity.NewEvent(employee)
+	if err != nil {
+		return nil, err
+	}
+
+	msg, err := event.ToJson()
+	if err != nil {
+		return nil, err
+	}
+
+	err = s.EventRepository.Publish(ctx, string(msg), topic.Employees, employee.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &employee.ID, nil
 }
 
-func (e *EmployeeService) FindEmployee(ctx context.Context, id string) (*entity.Employee, error) {
-	employee, err := e.EmployeeRepository.FindEmployee(ctx, id)
+func (s *EmployeeService) FindEmployee(ctx context.Context, id string) (*entity.Employee, error) {
+	employee, err := s.EmployeeRepository.FindEmployee(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 	return employee, nil
 }
 
-func (e *EmployeeService) SetPassword(ctx context.Context, employeeID string, password string, temporary bool) error {
+func (s *EmployeeService) SetPassword(ctx context.Context, employeeID string, password string, temporary bool) error {
 	pass, err := entity.NewPasswordInfo(password, temporary)
 	if err != nil {
 		return err
 	}
 
-	err = e.EmployeeRepository.SetPassword(ctx, employeeID, pass)
+	err = s.EmployeeRepository.SetPassword(ctx, employeeID, pass)
 	return err
 }
 
@@ -63,18 +81,33 @@ func (s *EmployeeService) SearchEmployees(ctx context.Context, firstName, lastNa
 	return employees, nil
 }
 
-func (e *EmployeeService) UpdateEmployee(ctx context.Context, id, firstName, lastName, email string) error {
-	_e, err := e.EmployeeRepository.FindEmployee(ctx, id)
+func (s *EmployeeService) UpdateEmployee(ctx context.Context, id, firstName, lastName, email string) error {
+	e, err := s.EmployeeRepository.FindEmployee(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	employee, err := entity.NewEmployee(_e.ID, _e.Username, firstName, lastName, email, _e.Pis, _e.Enabled, _e.EmailVerified)
+	employee, err := entity.NewEmployee(e.ID, e.Username, firstName, lastName, email, e.Pis, e.Enabled, e.EmailVerified)
 	if err != nil {
 		return err
 	}
 
-	err = e.EmployeeRepository.UpdateEmployee(ctx, employee)
+	err = s.EmployeeRepository.UpdateEmployee(ctx, employee)
+	if err != nil {
+		return err
+	}
+
+	event, err := entity.NewEvent(employee)
+	if err != nil {
+		return err
+	}
+
+	msg, err := event.ToJson()
+	if err != nil {
+		return err
+	}
+
+	err = s.EventRepository.Publish(ctx, string(msg), topic.Employees, employee.ID)
 	if err != nil {
 		return err
 	}
