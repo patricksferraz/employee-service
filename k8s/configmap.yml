@@ -4,7 +4,8 @@ metadata:
   name: employee-conf
 data:
   GIN_MODE: release
-  AUTH_SERVICE_ADDR: auth-service:50051
+  AUTH_SERVICE_ADDR: auth-keycloak-acl:50051
   KEYCLOAK_BASE_PATH: http://keycloak-http:80
   ELASTIC_APM_SERVER_URL: http://apm-server:8200
   ELASTIC_APM_SERVICE_NAME: employee-service
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9094
