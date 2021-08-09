@@ -8,7 +8,13 @@ import (
 )
 
 type AuthService struct {
-	Service pb.AuthServiceClient
+	Service pb.AuthKeycloakAclClient
+}
+
+func NewAuthService(service pb.AuthKeycloakAclClient) *AuthService {
+	return &AuthService{
+		Service: service,
+	}
 }
 
 func (a *AuthService) Verify(ctx context.Context, accessToken string) (*entity.Claims, error) {
@@ -27,10 +33,4 @@ func (a *AuthService) Verify(ctx context.Context, accessToken string) (*entity.C
 	}
 
 	return claims, nil
-}
-
-func NewAuthService(service pb.AuthServiceClient) *AuthService {
-	return &AuthService{
-		Service: service,
-	}
 }

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: employee
-        image: coding4u.azurecr.io/employee-service
+        image: ghcr.io/c-4u/employee-service:latest
         ports:
         - name: grpc
           containerPort: 50051

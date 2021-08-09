@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-func StartGrpcServer(port int, keycloak *external.Keycloak, service pb.AuthServiceClient, kafka *external.Kafka) {
+func StartGrpcServer(port int, keycloak *external.Keycloak, service pb.AuthKeycloakAclClient, kafka *external.Kafka) {
 
 	authService := _service.NewAuthService(service)
 	interceptor := NewAuthInterceptor(authService)

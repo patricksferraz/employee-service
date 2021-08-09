@@ -30,7 +30,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func StartRestServer(port int, keycloak *external.Keycloak, service pb.AuthServiceClient, kafka *external.Kafka) {
+func StartRestServer(port int, keycloak *external.Keycloak, service pb.AuthKeycloakAclClient, kafka *external.Kafka) {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
