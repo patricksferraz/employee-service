@@ -49,7 +49,7 @@ func NewAllCmd() *cobra.Command {
 			defer conn.Close()
 			authService := pb.NewAuthKeycloakAclClient(conn)
 
-			keycloak := external.ConnectKeycloak(
+			keycloak := external.NewKeycloak(
 				os.Getenv("KEYCLOAK_BASE_PATH"),
 				os.Getenv("KEYCLOAK_REALM"),
 				os.Getenv("KEYCLOAK_REALM_ADMIN_USERNAME"),

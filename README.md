@@ -165,22 +165,22 @@ __Prerequisites__:
 - Environment
 
   ```sh
-  # .env
+  # see .env.example
   EMPLOYEE_GRPC_PORT=50053
   EMPLOYEE_REST_PORT=8090
 
-  KEYCLOAKDB_DB=keycloak
-  KEYCLOAKDB_USERNAME=keycloak
-  KEYCLOAKDB_PASSWORD=password
-
-  KEYCLOAK_USERNAME=admin
-  KEYCLOAK_PASSWORD=Pa55w0rd
   KEYCLOAK_BASE_PATH=http://keycloak:8080
-  KEYCLOAK_REALM=keycloak_realm
-  KEYCLOAK_REALM_ADMIN_USERNAME=admin
-  KEYCLOAK_REALM_ADMIN_PASSWORD=password
+  KEYCLOAK_REALM=realm
+  KEYCLOAK_REALM_ADMIN_USERNAME=superusername
+  KEYCLOAK_REALM_ADMIN_PASSWORD=superpassword
 
-  AUTH_SERVICE_ADDR=auth-service:50051
+  KEYCLOAK_DB=keycloak
+  KEYCLOAK_USERNAME=username
+  KEYCLOAK_PASSWORD=password
+
+  AUTH_SERVICE_ADDR=auth-keycloak-acl:50051
+  ELASTIC_APM_SERVER_URL=http://apm-server:8200
+  KAFKA_BOOTSTRAP_SERVERS=kafka:9094
   ```
 
 __Installation__:
