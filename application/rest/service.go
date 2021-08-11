@@ -25,13 +25,13 @@ func NewRestService(service *service.Service) *RestService {
 // @Tags Employee
 // @Accept json
 // @Produce json
-// @Param body body EmployeeRequest true "JSON body to create a new employee"
-// @Success 200 {object} ID
+// @Param body body CreateEmployeeRequest true "JSON body to create a new employee"
+// @Success 200 {object} CreateEmployeeResponse
 // @Failure 401 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees [post]
 func (s *RestService) CreateEmployee(ctx *gin.Context) {
-	var json EmployeeRequest
+	var json CreateEmployeeRequest
 
 	if err := ctx.ShouldBindJSON(&json); err != nil {
 		ctx.JSON(
@@ -44,16 +44,7 @@ func (s *RestService) CreateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	id, err := s.Service.CreateEmployee(
-		ctx,
-		json.Username,
-		json.FirstName,
-		json.LastName,
-		json.Email,
-		json.Pis,
-		json.Enabled,
-		json.EmailVerified,
-	)
+	id, err := s.Service.CreateEmployee(ctx, json.FirstName, json.LastName, json.Email, json.Pis, json.Cpf)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,
@@ -65,7 +56,7 @@ func (s *RestService) CreateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, ID{ID: *id})
+	ctx.JSON(http.StatusOK, CreateEmployeeResponse{ID: *id})
 }
 
 // FindEmployee godoc
@@ -77,12 +68,12 @@ func (s *RestService) CreateEmployee(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path string true "Employee ID"
-// @Success 200 {object} EmployeeResponse
+// @Success 200 {object} Employee
 // @Failure 400 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees/{id} [get]
 func (s *RestService) FindEmployee(ctx *gin.Context) {
-	var req ID
+	var req IDRequest
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(
@@ -110,76 +101,16 @@ func (s *RestService) FindEmployee(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, employee)
 }
 
-// SetPassword godoc
-// @Security ApiKeyAuth
-// @Summary set a employee password
-// @Description Router for set a employee password
-// @ID setPassword
-// @Tags Employee
-// @Accept json
-// @Produce json
-// @Param id path string true "Employee ID"
-// @Param body body PasswordInfo true "JSON body to set a employee password"
-// @Success 200 {object} HTTPResponse
-// @Failure 400 {object} HTTPError
-// @Failure 403 {object} HTTPError
-// @Router /employees/{id}/password [put]
-func (s *RestService) SetPassword(ctx *gin.Context) {
-	var req ID
-	var json PasswordInfo
-
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(
-			http.StatusBadRequest,
-			HTTPError{
-				Code:  http.StatusBadRequest,
-				Error: err.Error(),
-			},
-		)
-		return
-	}
-
-	if err := ctx.ShouldBindJSON(&json); err != nil {
-		ctx.JSON(
-			http.StatusBadRequest,
-			HTTPError{
-				Code:  http.StatusBadRequest,
-				Error: err.Error(),
-			},
-		)
-		return
-	}
-
-	err := s.Service.SetPassword(ctx, req.ID, json.Password, json.Temporary)
-	if err != nil {
-		ctx.JSON(
-			http.StatusForbidden,
-			HTTPError{
-				Code:  http.StatusForbidden,
-				Error: err.Error(),
-			},
-		)
-		return
-	}
-
-	ctx.JSON(
-		http.StatusOK,
-		HTTPResponse{
-			Code:    http.StatusOK,
-			Message: "password updated successfully"},
-	)
-}
-
 // SearchEmployees godoc
 // @Security ApiKeyAuth
 // @Summary search employees by filter
 // @ID searchEmployees
 // @Tags Employee
-// @Description Search for employee employees by `filter`. if the page and page size are empty, 0 and 10 will be considered respectively.
+// @Description Search for employee employees by `filter`. if the page size is empty, 10 will be considered.
 // @Accept json
 // @Produce json
 // @Param body query SearchEmployeesRequest true "JSON body for search employees"
-// @Success 200 {array} EmployeeResponse
+// @Success 200 {array} SearchEmployeesResponse
 // @Failure 400 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees [get]
@@ -197,7 +128,7 @@ func (s *RestService) SearchEmployees(ctx *gin.Context) {
 		return
 	}
 
-	employees, err := s.Service.SearchEmployees(ctx, body.FirstName, body.LastName, body.PageSize, body.Page)
+	nextPageToken, employees, err := s.Service.SearchEmployees(ctx, body.FirstName, body.LastName, body.PageSize, body.PageToken)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,
@@ -209,7 +140,12 @@ func (s *RestService) SearchEmployees(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, employees)
+	ctx.JSON(http.StatusOK,
+		gin.H{
+			"next_page_token": *nextPageToken,
+			"time_records":    employees,
+		},
+	)
 }
 
 // UpdateEmployee godoc
@@ -227,7 +163,7 @@ func (s *RestService) SearchEmployees(ctx *gin.Context) {
 // @Failure 403 {object} HTTPError
 // @Router /employees/{id} [put]
 func (s *RestService) UpdateEmployee(ctx *gin.Context) {
-	var req ID
+	var req IDRequest
 	var json UpdateEmployeeRequest
 
 	if err := ctx.ShouldBindJSON(&json); err != nil {

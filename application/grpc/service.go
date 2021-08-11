@@ -12,25 +12,23 @@ import (
 
 type GrpcService struct {
 	pb.UnimplementedEmployeeServiceServer
-	EmployeeService *service.Service
+	Service *service.Service
 }
 
 func NewGrpcService(service *service.Service) *GrpcService {
 	return &GrpcService{
-		EmployeeService: service,
+		Service: service,
 	}
 }
 
 func (s *GrpcService) CreateEmployee(ctx context.Context, in *pb.CreateEmployeeRequest) (*pb.CreateEmployeeResponse, error) {
-	id, err := s.EmployeeService.CreateEmployee(
+	id, err := s.Service.CreateEmployee(
 		ctx,
-		in.Employee.Username,
 		in.Employee.FirstName,
 		in.Employee.LastName,
 		in.Employee.Email,
 		in.Employee.Pis,
-		in.Employee.Enabled,
-		in.Employee.EmailVerified,
+		in.Employee.Cpf,
 	)
 	if err != nil {
 		return &pb.CreateEmployeeResponse{}, err
@@ -39,35 +37,66 @@ func (s *GrpcService) CreateEmployee(ctx context.Context, in *pb.CreateEmployeeR
 	return &pb.CreateEmployeeResponse{Id: *id}, nil
 }
 
-func (s *GrpcService) FindEmployee(ctx context.Context, in *pb.FindEmployeeRequest) (*pb.Employee, error) {
-	employee, err := s.EmployeeService.FindEmployee(ctx, in.EmployeeId)
+func (s *GrpcService) FindEmployee(ctx context.Context, in *pb.FindEmployeeRequest) (*pb.FindEmployeeResponse, error) {
+	employee, err := s.Service.FindEmployee(ctx, in.Id)
 	if err != nil {
-		return &pb.Employee{}, err
+		return &pb.FindEmployeeResponse{}, err
 	}
 
-	return &pb.Employee{
-		Id:            employee.ID,
-		Username:      employee.Username,
-		FirstName:     employee.FirstName,
-		LastName:      employee.LastName,
-		Email:         employee.Email,
-		Pis:           employee.Pis,
-		Enabled:       employee.Enabled,
-		EmailVerified: employee.EmailVerified,
-		CreatedAt:     timestamppb.New(employee.CreatedAt),
+	return &pb.FindEmployeeResponse{
+		Employee: &pb.Employee{
+			Id:        employee.ID,
+			FirstName: employee.FirstName,
+			LastName:  employee.LastName,
+			Email:     employee.Email,
+			Pis:       employee.Pis,
+			Cpf:       employee.Cpf,
+			Enabled:   employee.Enabled,
+			CreatedAt: timestamppb.New(employee.CreatedAt),
+			UpdatedAt: timestamppb.New(employee.UpdatedAt),
+		},
 	}, nil
 }
 
-func (s *GrpcService) SetPassword(ctx context.Context, in *pb.SetPasswordRequest) (*pb.StatusResponse, error) {
-	err := s.EmployeeService.SetPassword(ctx, in.EmployeeId, in.Password, in.Temporary)
+func (s *GrpcService) SearchEmployees(ctx context.Context, in *pb.SearchEmployeesRequest) (*pb.SearchEmployeesResponse, error) {
+	nextPageToken, employees, err := s.Service.SearchEmployees(ctx, in.Filter.FirstName, in.Filter.LastName, int(in.Filter.PageSize), in.Filter.PageToken)
+	if err != nil {
+		return &pb.SearchEmployeesResponse{}, err
+	}
+
+	var result []*pb.Employee
+	for _, employee := range employees {
+		result = append(
+			result,
+			&pb.Employee{
+				Id:        employee.ID,
+				FirstName: employee.FirstName,
+				LastName:  employee.LastName,
+				Email:     employee.Email,
+				Pis:       employee.Pis,
+				Cpf:       employee.Cpf,
+				Enabled:   employee.Enabled,
+				CreatedAt: timestamppb.New(employee.CreatedAt),
+				UpdatedAt: timestamppb.New(employee.UpdatedAt),
+			},
+		)
+	}
+
+	return &pb.SearchEmployeesResponse{NextPageToken: *nextPageToken, Employees: result}, nil
+}
+
+func (s *GrpcService) UpdateEmployee(ctx context.Context, in *pb.UpdateEmployeeRequest) (*pb.StatusResponse, error) {
+	err := s.Service.UpdateEmployee(ctx, in.Id, in.FirstName, in.LastName, in.Email)
 	if err != nil {
 		return &pb.StatusResponse{
-			Code:  uint32(status.Code(err)),
-			Error: err.Error(),
+			Code:    uint32(status.Code(err)),
+			Message: "not updated",
+			Error:   err.Error(),
 		}, err
 	}
+
 	return &pb.StatusResponse{
 		Code:    uint32(codes.OK),
-		Message: "password updated successfully",
+		Message: "successfully updated",
 	}, nil
 }

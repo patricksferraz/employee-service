@@ -1,6 +1,9 @@
 package utils
 
-import "reflect"
+import (
+	"os"
+	"reflect"
+)
 
 func StructToAttr(item interface{}) *map[string][]string {
 	res := make(map[string][]string)
@@ -24,4 +27,12 @@ func StructToAttr(item interface{}) *map[string][]string {
 		}
 	}
 	return &res
+}
+
+func GetEnv(key string, defaultVal string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+
+	return defaultVal
 }

@@ -18,8 +18,8 @@ func NewService(repository repository.RepositoryInterface) *Service {
 	}
 }
 
-func (s *Service) CreateEmployee(ctx context.Context, username, firstName, lastName, email, pis string, enabled, emailVerified bool) (*string, error) {
-	employee, err := entity.NewEmployee("", username, firstName, lastName, email, pis, enabled, emailVerified)
+func (s *Service) CreateEmployee(ctx context.Context, firstName, lastName, email, pis, cpf string) (*string, error) {
+	employee, err := entity.NewEmployee(firstName, lastName, email, pis, cpf)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (s *Service) CreateEmployee(ctx context.Context, username, firstName, lastN
 		return nil, err
 	}
 
-	err = s.Repository.PublishEmployeeEvent(ctx, string(msg), topic.NEW_EMPLOYEE, employee.ID)
+	err = s.Repository.PublishEvent(ctx, string(msg), topic.NEW_EMPLOYEE, employee.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -55,43 +55,36 @@ func (s *Service) FindEmployee(ctx context.Context, id string) (*entity.Employee
 	return employee, nil
 }
 
-func (s *Service) SetPassword(ctx context.Context, employeeID string, password string, temporary bool) error {
-	pass, err := entity.NewPasswordInfo(password, temporary)
+func (s *Service) SearchEmployees(ctx context.Context, firstName, lastName string, pageSize int, pageToken string) (*string, []*entity.Employee, error) {
+	filter, err := entity.NewFilter(firstName, lastName, pageSize, pageToken)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
-	err = s.Repository.SetPassword(ctx, employeeID, pass)
-	return err
-}
-
-func (s *Service) SearchEmployees(ctx context.Context, firstName, lastName string, pageSize int, pageItems int) ([]*entity.Employee, error) {
-	filter, err := entity.NewFilter(firstName, lastName, pageSize, pageItems)
+	nextPageToken, employees, err := s.Repository.SearchEmployees(ctx, filter)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	employees, err := s.Repository.SearchEmployees(ctx, filter)
-	if err != nil {
-		return nil, err
-	}
-
-	return employees, nil
+	return nextPageToken, employees, nil
 }
 
 func (s *Service) UpdateEmployee(ctx context.Context, id, firstName, lastName, email string) error {
-	e, err := s.Repository.FindEmployee(ctx, id)
+	employee, err := s.Repository.FindEmployee(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	employee, err := entity.NewEmployee(e.ID, e.Username, firstName, lastName, email, e.Pis, e.Enabled, e.EmailVerified)
-	if err != nil {
+	if err = employee.SetFirstName(firstName); err != nil {
 		return err
 	}
-
-	err = s.Repository.UpdateEmployee(ctx, employee)
-	if err != nil {
+	if err = employee.SetLastName(lastName); err != nil {
+		return err
+	}
+	if err = employee.SetEmail(email); err != nil {
+		return err
+	}
+	if err = s.Repository.SaveEmployee(ctx, employee); err != nil {
 		return err
 	}
 
@@ -105,8 +98,7 @@ func (s *Service) UpdateEmployee(ctx context.Context, id, firstName, lastName, e
 		return err
 	}
 
-	err = s.Repository.PublishEmployeeEvent(ctx, string(msg), topic.UPDATE_EMPLOYEE, employee.ID)
-	if err != nil {
+	if err = s.Repository.PublishEvent(ctx, string(msg), topic.UPDATE_EMPLOYEE, employee.ID); err != nil {
 		return err
 	}
 

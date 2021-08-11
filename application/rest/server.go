@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/c-4u/employee-service/application/rest/docs"
 	_service "github.com/c-4u/employee-service/domain/service"
+	"github.com/c-4u/employee-service/infrastructure/db"
 	"github.com/c-4u/employee-service/infrastructure/external"
 	"github.com/c-4u/employee-service/infrastructure/repository"
 	"github.com/gin-contrib/cors"
@@ -30,7 +31,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func StartRestServer(port int, keycloak *external.Keycloak, authConn *grpc.ClientConn, kafka *external.Kafka) {
+func StartRestServer(database *db.Postgres, authConn *grpc.ClientConn, kafka *external.Kafka, port int) {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -45,7 +46,7 @@ func StartRestServer(port int, keycloak *external.Keycloak, authConn *grpc.Clien
 
 	authService := _service.NewAuthService(authConn)
 	authMiddlerare := NewAuthMiddleware(authService)
-	repository := repository.NewRepository(keycloak, kafka)
+	repository := repository.NewRepository(database, kafka)
 	service := _service.NewService(repository)
 	restService := NewRestService(service)
 
@@ -58,7 +59,6 @@ func StartRestServer(port int, keycloak *external.Keycloak, authConn *grpc.Clien
 			authorized.GET("", restService.SearchEmployees)
 			authorized.GET("/:id", restService.FindEmployee)
 			authorized.PUT("/:id", restService.UpdateEmployee)
-			authorized.PUT("/:id/password", restService.SetPassword)
 		}
 	}
 

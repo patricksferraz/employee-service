@@ -12,7 +12,7 @@ type Filter struct {
 	FirstName string `json:"first_name" valid:"optional"`
 	LastName  string `json:"last_name" valid:"optional"`
 	PageSize  int    `json:"page_size" valid:"optional"`
-	Page      int    `json:"page" valid:"optional"`
+	PageToken string `json:"page_token" valid:"optional"`
 }
 
 func (e *Filter) isValid() error {
@@ -20,7 +20,7 @@ func (e *Filter) isValid() error {
 	return err
 }
 
-func NewFilter(firstName, lastName string, pageSize int, page int) (*Filter, error) {
+func NewFilter(firstName, lastName string, pageSize int, pageToken string) (*Filter, error) {
 
 	if pageSize == 0 {
 		pageSize = 10
@@ -30,7 +30,7 @@ func NewFilter(firstName, lastName string, pageSize int, page int) (*Filter, err
 		FirstName: firstName,
 		LastName:  lastName,
 		PageSize:  pageSize,
-		Page:      page,
+		PageToken: pageToken,
 	}
 
 	err := entity.isValid()

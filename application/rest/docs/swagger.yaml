@@ -1,38 +1,37 @@
 basePath: /api/v1
 definitions:
-  rest.EmployeeRequest:
+  rest.CreateEmployeeRequest:
     properties:
+      cpf:
+        type: string
       email:
         type: string
-      email_verified:
-        type: boolean
-      enabled:
-        type: boolean
       first_name:
         type: string
       last_name:
         type: string
       pis:
         type: string
-      username:
-        type: string
     required:
+    - cpf
     - email
-    - email_verified
-    - enabled
     - first_name
     - last_name
     - pis
-    - username
     type: object
-  rest.EmployeeResponse:
+  rest.CreateEmployeeResponse:
     properties:
+      id:
+        type: string
+    type: object
+  rest.Employee:
+    properties:
+      cpf:
+        type: string
       created_at:
         type: string
       email:
         type: string
-      email_verified:
-        type: boolean
       enabled:
         type: boolean
       first_name:
@@ -43,16 +42,8 @@ definitions:
         type: string
       pis:
         type: string
-      username:
+      updated_at:
         type: string
-    required:
-    - email
-    - email_verified
-    - enabled
-    - first_name
-    - last_name
-    - pis
-    - username
     type: object
   rest.HTTPError:
     properties:
@@ -72,21 +63,14 @@ definitions:
         example: a message
         type: string
     type: object
-  rest.ID:
+  rest.SearchEmployeesResponse:
     properties:
-      id:
+      employees:
+        items:
+          $ref: '#/definitions/rest.Employee'
+        type: array
+      next_page_token:
         type: string
-    required:
-    - id
-    type: object
-  rest.PasswordInfo:
-    properties:
-      password:
-        example: mypassword
-        type: string
-      temporary:
-        example: false
-        type: boolean
     type: object
   rest.UpdateEmployeeRequest:
     properties:
@@ -110,8 +94,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Search for employee employees by `filter`. if the page and page
-        size are empty, 0 and 10 will be considered respectively.
+      description: Search for employee employees by `filter`. if the page size is
+        empty, 10 will be considered.
       operationId: searchEmployees
       parameters:
       - in: query
@@ -120,14 +104,13 @@ paths:
       - in: query
         name: last_name
         type: string
-      - default: 0
-        in: query
-        name: page
-        type: integer
       - default: 10
         in: query
         name: page_size
         type: integer
+      - in: query
+        name: page_token
+        type: string
       produces:
       - application/json
       responses:
@@ -135,7 +118,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/rest.EmployeeResponse'
+              $ref: '#/definitions/rest.SearchEmployeesResponse'
             type: array
         "400":
           description: Bad Request
@@ -161,14 +144,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/rest.EmployeeRequest'
+          $ref: '#/definitions/rest.CreateEmployeeRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.ID'
+            $ref: '#/definitions/rest.CreateEmployeeResponse'
         "401":
           description: Unauthorized
           schema:
@@ -200,7 +183,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.EmployeeResponse'
+            $ref: '#/definitions/rest.Employee'
         "400":
           description: Bad Request
           schema:
@@ -249,44 +232,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: update a employee
-      tags:
-      - Employee
-  /employees/{id}/password:
-    put:
-      consumes:
-      - application/json
-      description: Router for set a employee password
-      operationId: setPassword
-      parameters:
-      - description: Employee ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: JSON body to set a employee password
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/rest.PasswordInfo'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/rest.HTTPResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/rest.HTTPError'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/rest.HTTPError'
-      security:
-      - ApiKeyAuth: []
-      summary: set a employee password
       tags:
       - Employee
 securityDefinitions:
