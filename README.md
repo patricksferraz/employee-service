@@ -112,9 +112,10 @@ To get a local copy up and running follow these simple steps.
 
   ```sh
   # file: credentials
-  KEYCLOAK_REALM=keycloak_realm
-  KEYCLOAK_REALM_ADMIN_USERNAME=admin
-  KEYCLOAK_REALM_ADMIN_PASSWORD=password
+  DB_DEBUG=true
+  DB_MIGRATE=true
+  DSN_TYPE=postgres
+  DSN="dbname=employee-service sslmode=disable user=postgres password=pasword host=postgres"
   ```
 
   `kubectl create secret generic employee-secret --from-env-file ./credentials`
@@ -169,17 +170,23 @@ __Prerequisites__:
   EMPLOYEE_GRPC_PORT=50053
   EMPLOYEE_REST_PORT=8090
 
-  KEYCLOAK_BASE_PATH=http://keycloak:8080
-  KEYCLOAK_REALM=realm
-  KEYCLOAK_REALM_ADMIN_USERNAME=superusername
-  KEYCLOAK_REALM_ADMIN_PASSWORD=superpassword
+  POSTGRES_DB=time-record-service
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=password
+  DB_MIGRATE=true
+  DB_DEBUG=true
+  DB_PORT=5432
 
-  KEYCLOAK_DB=keycloak
-  KEYCLOAK_USERNAME=username
-  KEYCLOAK_PASSWORD=password
+  DSN_TYPE=postgres
+  DSN="dbname=${POSTGRES_DB} sslmode=disable user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} host=postgres"
+
+  PGADMIN_DEFAULT_EMAIL=admin@user.com
+  PGADMIN_DEFAULT_PASSWORD=123456
 
   AUTH_SERVICE_ADDR=auth-keycloak-acl:50051
+
   ELASTIC_APM_SERVER_URL=http://apm-server:8200
+
   KAFKA_BOOTSTRAP_SERVERS=kafka:9094
   ```
 
