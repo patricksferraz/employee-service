@@ -5,15 +5,16 @@ import (
 
 	"github.com/c-4u/employee-service/application/grpc/pb"
 	"github.com/c-4u/employee-service/domain/entity"
+	"google.golang.org/grpc"
 )
 
 type AuthService struct {
-	Service pb.AuthKeycloakAclClient
+	service pb.AuthKeycloakAclClient
 }
 
-func NewAuthService(service pb.AuthKeycloakAclClient) *AuthService {
+func NewAuthService(cc *grpc.ClientConn) *AuthService {
 	return &AuthService{
-		Service: service,
+		service: pb.NewAuthKeycloakAclClient(cc),
 	}
 }
 
@@ -22,7 +23,7 @@ func (a *AuthService) Verify(ctx context.Context, accessToken string) (*entity.C
 		AccessToken: accessToken,
 	}
 
-	_claims, err := a.Service.FindClaimsByToken(ctx, req)
+	_claims, err := a.service.FindClaimsByToken(ctx, req)
 	if err != nil {
 		return nil, err
 	}

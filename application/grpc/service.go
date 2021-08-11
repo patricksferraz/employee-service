@@ -10,18 +10,18 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-type EmployeeGrpcService struct {
+type GrpcService struct {
 	pb.UnimplementedEmployeeServiceServer
-	EmployeeService *service.EmployeeService
+	EmployeeService *service.Service
 }
 
-func NewEmployeeGrpcService(service *service.EmployeeService) *EmployeeGrpcService {
-	return &EmployeeGrpcService{
+func NewGrpcService(service *service.Service) *GrpcService {
+	return &GrpcService{
 		EmployeeService: service,
 	}
 }
 
-func (s *EmployeeGrpcService) CreateEmployee(ctx context.Context, in *pb.CreateEmployeeRequest) (*pb.CreateEmployeeResponse, error) {
+func (s *GrpcService) CreateEmployee(ctx context.Context, in *pb.CreateEmployeeRequest) (*pb.CreateEmployeeResponse, error) {
 	id, err := s.EmployeeService.CreateEmployee(
 		ctx,
 		in.Employee.Username,
@@ -39,7 +39,7 @@ func (s *EmployeeGrpcService) CreateEmployee(ctx context.Context, in *pb.CreateE
 	return &pb.CreateEmployeeResponse{Id: *id}, nil
 }
 
-func (s *EmployeeGrpcService) FindEmployee(ctx context.Context, in *pb.FindEmployeeRequest) (*pb.Employee, error) {
+func (s *GrpcService) FindEmployee(ctx context.Context, in *pb.FindEmployeeRequest) (*pb.Employee, error) {
 	employee, err := s.EmployeeService.FindEmployee(ctx, in.EmployeeId)
 	if err != nil {
 		return &pb.Employee{}, err
@@ -58,7 +58,7 @@ func (s *EmployeeGrpcService) FindEmployee(ctx context.Context, in *pb.FindEmplo
 	}, nil
 }
 
-func (s *EmployeeGrpcService) SetPassword(ctx context.Context, in *pb.SetPasswordRequest) (*pb.StatusResponse, error) {
+func (s *GrpcService) SetPassword(ctx context.Context, in *pb.SetPasswordRequest) (*pb.StatusResponse, error) {
 	err := s.EmployeeService.SetPassword(ctx, in.EmployeeId, in.Password, in.Temporary)
 	if err != nil {
 		return &pb.StatusResponse{

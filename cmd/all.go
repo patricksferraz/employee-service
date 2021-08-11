@@ -22,7 +22,6 @@ import (
 	"runtime"
 
 	"github.com/c-4u/employee-service/application/grpc"
-	"github.com/c-4u/employee-service/application/grpc/pb"
 	"github.com/c-4u/employee-service/application/rest"
 	"github.com/c-4u/employee-service/infrastructure/external"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
@@ -41,13 +40,11 @@ func NewAllCmd() *cobra.Command {
 
 		Run: func(cmd *cobra.Command, args []string) {
 			authServiceAddr := os.Getenv("AUTH_SERVICE_ADDR")
-			conn, err := external.ConnectAuthService(authServiceAddr)
+			authConn, err := external.GrpcClient(authServiceAddr)
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			defer conn.Close()
-			authService := pb.NewAuthKeycloakAclClient(conn)
+			defer authConn.Close()
 
 			keycloak := external.NewKeycloak(
 				os.Getenv("KEYCLOAK_BASE_PATH"),
@@ -66,8 +63,8 @@ func NewAllCmd() *cobra.Command {
 			}
 
 			go kafka.DeliveryReport()
-			go rest.StartRestServer(restPort, keycloak, authService, kafka)
-			grpc.StartGrpcServer(grpcPort, keycloak, authService, kafka)
+			go rest.StartRestServer(restPort, keycloak, authConn, kafka)
+			grpc.StartGrpcServer(grpcPort, keycloak, authConn, kafka)
 		},
 	}
 

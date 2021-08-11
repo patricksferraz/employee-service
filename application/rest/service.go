@@ -7,13 +7,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type EmployeeRestService struct {
-	EmployeeService *service.EmployeeService
+type RestService struct {
+	Service *service.Service
 }
 
-func NewEmployeeRestService(service *service.EmployeeService) *EmployeeRestService {
-	return &EmployeeRestService{
-		EmployeeService: service,
+func NewRestService(service *service.Service) *RestService {
+	return &RestService{
+		Service: service,
 	}
 }
 
@@ -30,7 +30,7 @@ func NewEmployeeRestService(service *service.EmployeeService) *EmployeeRestServi
 // @Failure 401 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees [post]
-func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
+func (s *RestService) CreateEmployee(ctx *gin.Context) {
 	var json EmployeeRequest
 
 	if err := ctx.ShouldBindJSON(&json); err != nil {
@@ -44,7 +44,7 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	id, err := s.EmployeeService.CreateEmployee(
+	id, err := s.Service.CreateEmployee(
 		ctx,
 		json.Username,
 		json.FirstName,
@@ -81,7 +81,7 @@ func (s *EmployeeRestService) CreateEmployee(ctx *gin.Context) {
 // @Failure 400 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees/{id} [get]
-func (s *EmployeeRestService) FindEmployee(ctx *gin.Context) {
+func (s *RestService) FindEmployee(ctx *gin.Context) {
 	var req ID
 
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -95,7 +95,7 @@ func (s *EmployeeRestService) FindEmployee(ctx *gin.Context) {
 		return
 	}
 
-	employee, err := s.EmployeeService.FindEmployee(ctx, req.ID)
+	employee, err := s.Service.FindEmployee(ctx, req.ID)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,
@@ -124,7 +124,7 @@ func (s *EmployeeRestService) FindEmployee(ctx *gin.Context) {
 // @Failure 400 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees/{id}/password [put]
-func (s *EmployeeRestService) SetPassword(ctx *gin.Context) {
+func (s *RestService) SetPassword(ctx *gin.Context) {
 	var req ID
 	var json PasswordInfo
 
@@ -150,7 +150,7 @@ func (s *EmployeeRestService) SetPassword(ctx *gin.Context) {
 		return
 	}
 
-	err := s.EmployeeService.SetPassword(ctx, req.ID, json.Password, json.Temporary)
+	err := s.Service.SetPassword(ctx, req.ID, json.Password, json.Temporary)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,
@@ -183,7 +183,7 @@ func (s *EmployeeRestService) SetPassword(ctx *gin.Context) {
 // @Failure 400 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees [get]
-func (s *EmployeeRestService) SearchEmployees(ctx *gin.Context) {
+func (s *RestService) SearchEmployees(ctx *gin.Context) {
 	var body SearchEmployeesRequest
 
 	if err := ctx.ShouldBindQuery(&body); err != nil {
@@ -197,7 +197,7 @@ func (s *EmployeeRestService) SearchEmployees(ctx *gin.Context) {
 		return
 	}
 
-	employees, err := s.EmployeeService.SearchEmployees(ctx, body.FirstName, body.LastName, body.PageSize, body.Page)
+	employees, err := s.Service.SearchEmployees(ctx, body.FirstName, body.LastName, body.PageSize, body.Page)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,
@@ -226,7 +226,7 @@ func (s *EmployeeRestService) SearchEmployees(ctx *gin.Context) {
 // @Failure 400 {object} HTTPError
 // @Failure 403 {object} HTTPError
 // @Router /employees/{id} [put]
-func (s *EmployeeRestService) UpdateEmployee(ctx *gin.Context) {
+func (s *RestService) UpdateEmployee(ctx *gin.Context) {
 	var req ID
 	var json UpdateEmployeeRequest
 
@@ -252,7 +252,7 @@ func (s *EmployeeRestService) UpdateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	err := s.EmployeeService.UpdateEmployee(ctx, req.ID, json.FirstName, json.LastName, json.Email)
+	err := s.Service.UpdateEmployee(ctx, req.ID, json.FirstName, json.LastName, json.Email)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,

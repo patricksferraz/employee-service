@@ -7,13 +7,13 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-type Event struct {
+type EmployeeEvent struct {
 	ID       string    `json:"id,omitempty" valid:"uuid"`
 	Employee *Employee `json:"employee,omitempty" valid:"-"`
 }
 
-func NewEvent(employee *Employee) (*Event, error) {
-	e := &Event{
+func NewEmployeeEvent(employee *Employee) (*EmployeeEvent, error) {
+	e := &EmployeeEvent{
 		ID:       uuid.NewV4().String(),
 		Employee: employee,
 	}
@@ -25,12 +25,12 @@ func NewEvent(employee *Employee) (*Event, error) {
 	return e, nil
 }
 
-func (e *Event) isValid() error {
+func (e *EmployeeEvent) isValid() error {
 	_, err := govalidator.ValidateStruct(e)
 	return err
 }
 
-func (e *Event) ToJson() ([]byte, error) {
+func (e *EmployeeEvent) ToJson() ([]byte, error) {
 	err := e.isValid()
 	if err != nil {
 		return nil, err

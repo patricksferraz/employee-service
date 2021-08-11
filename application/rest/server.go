@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/c-4u/employee-service/application/grpc/pb"
 	_ "github.com/c-4u/employee-service/application/rest/docs"
 	_service "github.com/c-4u/employee-service/domain/service"
 	"github.com/c-4u/employee-service/infrastructure/external"
@@ -14,6 +13,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"go.elastic.co/apm/module/apmgin"
+	"google.golang.org/grpc"
 )
 
 // @title Employee Swagger API
@@ -30,7 +30,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func StartRestServer(port int, keycloak *external.Keycloak, service pb.AuthKeycloakAclClient, kafka *external.Kafka) {
+func StartRestServer(port int, keycloak *external.Keycloak, authConn *grpc.ClientConn, kafka *external.Kafka) {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -43,23 +43,22 @@ func StartRestServer(port int, keycloak *external.Keycloak, service pb.AuthKeycl
 	}))
 	r.Use(apmgin.Middleware(r))
 
-	authService := _service.NewAuthService(service)
+	authService := _service.NewAuthService(authConn)
 	authMiddlerare := NewAuthMiddleware(authService)
-	employeeRepository := repository.NewKeycloakEmployeeRepository(keycloak)
-	kafkaRepository := repository.NewKafkaRepository(kafka)
-	employeeService := _service.NewEmployeeService(employeeRepository, kafkaRepository)
-	employeeRestService := NewEmployeeRestService(employeeService)
+	repository := repository.NewRepository(keycloak, kafka)
+	service := _service.NewService(repository)
+	restService := NewRestService(service)
 
 	v1 := r.Group("api/v1/employees")
 	{
 		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 		authorized := v1.Group("", authMiddlerare.Require())
 		{
-			authorized.POST("", employeeRestService.CreateEmployee)
-			authorized.GET("", employeeRestService.SearchEmployees)
-			authorized.GET("/:id", employeeRestService.FindEmployee)
-			authorized.PUT("/:id", employeeRestService.UpdateEmployee)
-			authorized.PUT("/:id/password", employeeRestService.SetPassword)
+			authorized.POST("", restService.CreateEmployee)
+			authorized.GET("", restService.SearchEmployees)
+			authorized.GET("/:id", restService.FindEmployee)
+			authorized.PUT("/:id", restService.UpdateEmployee)
+			authorized.PUT("/:id/password", restService.SetPassword)
 		}
 	}
 

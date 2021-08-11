@@ -1,5 +1,6 @@
 package topic
 
-var (
-	Employees string = "employees"
+const (
+	NEW_EMPLOYEE    string = "new-employee"
+	UPDATE_EMPLOYEE string = "update-employee"
 )
