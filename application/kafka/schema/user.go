@@ -11,7 +11,7 @@ func init() {
 type User struct {
 	Base       `json:",inline" valid:"required"`
 	Username   string `json:"username,omitempty" valid:"required"`
-	EmployeeID string `json:"employee_id,omitempty" valid:"required"`
+	EmployeeID string `json:"employee_id,omitempty" valid:"uuid"`
 }
 
 func NewUser() *User {

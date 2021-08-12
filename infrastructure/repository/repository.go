@@ -53,7 +53,7 @@ func (r *Repository) SearchEmployees(ctx context.Context, filter *entity.Filter)
 		q = q.Where("token < ?", filter.PageToken)
 	}
 
-	err := q.Find(&employees).Error
+	err := q.Preload("User").Find(&employees).Error
 	if err != nil {
 		return nil, nil, err
 	}

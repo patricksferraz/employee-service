@@ -48,7 +48,7 @@ func (p *KafkaProcessor) processMessage(msg *ckafka.Message) {
 }
 
 func (p *KafkaProcessor) createUser(msg *ckafka.Message) error {
-	userEvent := &schema.UserEvent{}
+	userEvent := schema.NewUserEvent()
 	err := userEvent.ParseJson(msg.Value)
 	if err != nil {
 		return err

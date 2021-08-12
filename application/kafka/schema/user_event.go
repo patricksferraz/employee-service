@@ -12,7 +12,7 @@ func init() {
 
 type UserEvent struct {
 	ID   string `json:"id,omitempty" valid:"uuid"`
-	User *User  `json:"user,omitempty" valid:"-"`
+	User *User  `json:"user,omitempty" valid:"required"`
 }
 
 func NewUserEvent() *UserEvent {
