@@ -16,6 +16,12 @@ type AuthInterceptor struct {
 	Claims      *entity.Claims
 }
 
+func NewAuthInterceptor(authService *service.AuthService) *AuthInterceptor {
+	return &AuthInterceptor{
+		AuthService: authService,
+	}
+}
+
 func (a *AuthInterceptor) Unary() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		err := a.authorize(ctx, info.FullMethod)
@@ -66,10 +72,4 @@ func (a *AuthInterceptor) authorize(ctx context.Context, method string) error {
 
 	// return status.Error(codes.PermissionDenied, "no permission to access this RPC")
 	return nil
-}
-
-func NewAuthInterceptor(authService *service.AuthService) *AuthInterceptor {
-	return &AuthInterceptor{
-		AuthService: authService,
-	}
 }

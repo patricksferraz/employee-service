@@ -22,9 +22,11 @@ import (
 	"runtime"
 
 	"github.com/c-4u/employee-service/application/grpc"
+	"github.com/c-4u/employee-service/application/kafka"
 	"github.com/c-4u/employee-service/application/rest"
 	"github.com/c-4u/employee-service/infrastructure/db"
 	"github.com/c-4u/employee-service/infrastructure/external"
+	"github.com/c-4u/employee-service/infrastructure/external/topic"
 	"github.com/c-4u/employee-service/utils"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
@@ -35,6 +37,8 @@ import (
 func NewAllCmd() *cobra.Command {
 	var grpcPort int
 	var restPort int
+	var servers string
+	var groupId string
 	var dsn string
 	var dsnType string
 
@@ -65,25 +69,27 @@ func NewAllCmd() *cobra.Command {
 			defer authConn.Close()
 
 			deliveryChan := make(chan ckafka.Event)
-			kafka, err := external.NewKafka(
-				os.Getenv("KAFKA_BOOTSTRAP_SERVERS"),
-				deliveryChan,
-			)
+			k, err := external.NewKafka(servers, groupId, []string{topic.NEW_USER}, deliveryChan)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			go kafka.DeliveryReport()
-			go rest.StartRestServer(database, authConn, kafka, restPort)
-			grpc.StartGrpcServer(database, authConn, kafka, grpcPort)
+			go k.DeliveryReport()
+			go kafka.StartKafkaProcessor(database, servers, groupId, k)
+			go rest.StartRestServer(database, authConn, k, restPort)
+			grpc.StartGrpcServer(database, authConn, k, grpcPort)
 		},
 	}
 
 	dDsn := os.Getenv("DSN")
 	sDsnType := os.Getenv("DSN_TYPE")
+	dServers := utils.GetEnv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9094")
+	dGroupId := utils.GetEnv("KAFKA_CONSUMER_GROUP_ID", "time-record-service")
 
 	allCmd.Flags().StringVarP(&dsn, "dsn", "d", dDsn, "dsn")
 	allCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
+	allCmd.Flags().StringVarP(&servers, "servers", "s", dServers, "kafka servers")
+	allCmd.Flags().StringVarP(&groupId, "groupId", "i", dGroupId, "kafka group id")
 	allCmd.Flags().IntVarP(&grpcPort, "grpcPort", "g", 50051, "gRPC Server port")
 	allCmd.Flags().IntVarP(&restPort, "restPort", "r", 8080, "rest server port")
 

@@ -18,12 +18,12 @@ func NewAuthService(cc *grpc.ClientConn) *AuthService {
 	}
 }
 
-func (a *AuthService) Verify(ctx context.Context, accessToken string) (*entity.Claims, error) {
+func (s *AuthService) Verify(ctx context.Context, accessToken string) (*entity.Claims, error) {
 	req := &pb.FindClaimsByTokenRequest{
 		AccessToken: accessToken,
 	}
 
-	_claims, err := a.service.FindClaimsByToken(ctx, req)
+	_claims, err := s.service.FindClaimsByToken(ctx, req)
 	if err != nil {
 		return nil, err
 	}

@@ -22,8 +22,10 @@ import (
 	"runtime"
 
 	"github.com/c-4u/employee-service/application/grpc"
+	"github.com/c-4u/employee-service/application/kafka"
 	"github.com/c-4u/employee-service/infrastructure/db"
 	"github.com/c-4u/employee-service/infrastructure/external"
+	"github.com/c-4u/employee-service/infrastructure/external/topic"
 	"github.com/c-4u/employee-service/utils"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
@@ -35,6 +37,8 @@ func NewGrpcCmd() *cobra.Command {
 	var grpcPort int
 	var dsn string
 	var dsnType string
+	var servers string
+	var groupId string
 
 	grpcCmd := &cobra.Command{
 		Use:   "grpc",
@@ -63,24 +67,26 @@ func NewGrpcCmd() *cobra.Command {
 			defer authConn.Close()
 
 			deliveryChan := make(chan ckafka.Event)
-			kafka, err := external.NewKafka(
-				os.Getenv("KAFKA_BOOTSTRAP_SERVERS"),
-				deliveryChan,
-			)
+			k, err := external.NewKafka(servers, groupId, []string{topic.NEW_USER}, deliveryChan)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			go kafka.DeliveryReport()
-			grpc.StartGrpcServer(database, authConn, kafka, grpcPort)
+			go k.DeliveryReport()
+			go kafka.StartKafkaProcessor(database, servers, groupId, k)
+			grpc.StartGrpcServer(database, authConn, k, grpcPort)
 		},
 	}
 
 	dDsn := os.Getenv("DSN")
 	sDsnType := os.Getenv("DSN_TYPE")
+	dServers := utils.GetEnv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9094")
+	dGroupId := utils.GetEnv("KAFKA_CONSUMER_GROUP_ID", "time-record-service")
 
 	grpcCmd.Flags().StringVarP(&dsn, "dsn", "d", dDsn, "dsn")
 	grpcCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
+	grpcCmd.Flags().StringVarP(&servers, "servers", "s", dServers, "kafka servers")
+	grpcCmd.Flags().StringVarP(&groupId, "groupId", "i", dGroupId, "kafka group id")
 	grpcCmd.Flags().IntVarP(&grpcPort, "port", "p", 50051, "gRPC Server port")
 
 	return grpcCmd
