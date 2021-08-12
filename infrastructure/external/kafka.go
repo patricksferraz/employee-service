@@ -7,11 +7,13 @@ import (
 )
 
 type Kafka struct {
-	Producer     *ckafka.Producer
-	DeliveryChan chan ckafka.Event
+	Consumer      *ckafka.Consumer
+	Producer      *ckafka.Producer
+	ConsumeTopics []string
+	DeliveryChan  chan ckafka.Event
 }
 
-func NewKafka(servers string, deliveryChan chan ckafka.Event) (*Kafka, error) {
+func NewKafka(servers string, groupId string, consumeTopics []string, deliveryChan chan ckafka.Event) (*Kafka, error) {
 	p, err := ckafka.NewProducer(
 		&ckafka.ConfigMap{
 			"bootstrap.servers": servers,
@@ -21,9 +23,22 @@ func NewKafka(servers string, deliveryChan chan ckafka.Event) (*Kafka, error) {
 		return nil, err
 	}
 
+	c, err := ckafka.NewConsumer(
+		&ckafka.ConfigMap{
+			"bootstrap.servers": servers,
+			"group.id":          groupId,
+			"auto.offset.reset": "earliest",
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Kafka{
-		Producer:     p,
-		DeliveryChan: deliveryChan,
+		Consumer:      c,
+		Producer:      p,
+		ConsumeTopics: consumeTopics,
+		DeliveryChan:  deliveryChan,
 	}, nil
 }
 

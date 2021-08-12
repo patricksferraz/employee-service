@@ -29,7 +29,7 @@ func (r *Repository) CreateEmployee(ctx context.Context, employee *entity.Employ
 
 func (r *Repository) FindEmployee(ctx context.Context, id string) (*entity.Employee, error) {
 	var employee entity.Employee
-	r.P.Db.First(&employee, "id = ?", id)
+	r.P.Db.Preload("User").First(&employee, "id = ?", id)
 
 	if employee.ID == "" {
 		return nil, fmt.Errorf("no employee found")
@@ -83,4 +83,9 @@ func (r *Repository) PublishEvent(ctx context.Context, msg, topic, key string) e
 		return err
 	}
 	return nil
+}
+
+func (r *Repository) CreateUser(ctx context.Context, user *entity.User) error {
+	err := r.P.Db.Create(user).Error
+	return err
 }

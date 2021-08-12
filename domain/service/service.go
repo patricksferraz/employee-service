@@ -104,3 +104,22 @@ func (s *Service) UpdateEmployee(ctx context.Context, id, firstName, lastName, e
 
 	return nil
 }
+
+func (s *Service) CreateUser(ctx context.Context, id, username, employeeID string) error {
+	employee, err := s.Repository.FindEmployee(ctx, employeeID)
+	if err != nil {
+		return err
+	}
+
+	user, err := entity.NewUser(id, username, employee)
+	if err != nil {
+		return err
+	}
+
+	err = s.Repository.CreateUser(ctx, user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

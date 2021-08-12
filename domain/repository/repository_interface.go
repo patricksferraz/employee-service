@@ -13,4 +13,6 @@ type RepositoryInterface interface {
 	SaveEmployee(ctx context.Context, employee *entity.Employee) error
 
 	PublishEvent(ctx context.Context, msg, topic, key string) error
+
+	CreateUser(ctx context.Context, user *entity.User) error
 }

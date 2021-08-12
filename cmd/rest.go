@@ -21,9 +21,11 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/c-4u/employee-service/application/kafka"
 	"github.com/c-4u/employee-service/application/rest"
 	"github.com/c-4u/employee-service/infrastructure/db"
 	"github.com/c-4u/employee-service/infrastructure/external"
+	"github.com/c-4u/employee-service/infrastructure/external/topic"
 	"github.com/c-4u/employee-service/utils"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
@@ -35,6 +37,8 @@ func NewRestCmd() *cobra.Command {
 	var restPort int
 	var dsn string
 	var dsnType string
+	var servers string
+	var groupId string
 
 	restCmd := &cobra.Command{
 		Use:   "rest",
@@ -63,24 +67,26 @@ func NewRestCmd() *cobra.Command {
 			defer authConn.Close()
 
 			deliveryChan := make(chan ckafka.Event)
-			kafka, err := external.NewKafka(
-				os.Getenv("KAFKA_BOOTSTRAP_SERVERS"),
-				deliveryChan,
-			)
+			k, err := external.NewKafka(servers, groupId, []string{topic.NEW_USER}, deliveryChan)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			go kafka.DeliveryReport()
-			rest.StartRestServer(database, authConn, kafka, restPort)
+			go k.DeliveryReport()
+			go kafka.StartKafkaProcessor(database, servers, groupId, k)
+			rest.StartRestServer(database, authConn, k, restPort)
 		},
 	}
 
 	dDsn := os.Getenv("DSN")
 	sDsnType := os.Getenv("DSN_TYPE")
+	dServers := utils.GetEnv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9094")
+	dGroupId := utils.GetEnv("KAFKA_CONSUMER_GROUP_ID", "time-record-service")
 
 	restCmd.Flags().StringVarP(&dsn, "dsn", "d", dDsn, "dsn")
 	restCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
+	restCmd.Flags().StringVarP(&servers, "servers", "s", dServers, "kafka servers")
+	restCmd.Flags().StringVarP(&groupId, "groupId", "i", dGroupId, "kafka group id")
 	restCmd.Flags().IntVarP(&restPort, "port", "p", 8080, "rest server port")
 
 	return restCmd
