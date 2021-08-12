@@ -22,8 +22,9 @@ import (
 	"runtime"
 
 	"github.com/c-4u/employee-service/application/grpc"
-	"github.com/c-4u/employee-service/application/grpc/pb"
+	"github.com/c-4u/employee-service/infrastructure/db"
 	"github.com/c-4u/employee-service/infrastructure/external"
+	"github.com/c-4u/employee-service/utils"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
@@ -32,27 +33,34 @@ import (
 // NewGrpcCmd represents the grpc command
 func NewGrpcCmd() *cobra.Command {
 	var grpcPort int
+	var dsn string
+	var dsnType string
 
 	grpcCmd := &cobra.Command{
 		Use:   "grpc",
 		Short: "Run gRPC Service",
 
 		Run: func(cmd *cobra.Command, args []string) {
-			authServiceAddr := os.Getenv("AUTH_SERVICE_ADDR")
-			conn, err := external.ConnectAuthService(authServiceAddr)
+			database, err := db.NewPostgres(dsnType, dsn)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			defer conn.Close()
-			authService := pb.NewAuthKeycloakAclClient(conn)
+			if utils.GetEnv("DB_DEBUG", "false") == "true" {
+				database.Debug(true)
+			}
 
-			keycloak := external.ConnectKeycloak(
-				os.Getenv("KEYCLOAK_BASE_PATH"),
-				os.Getenv("KEYCLOAK_REALM"),
-				os.Getenv("KEYCLOAK_REALM_ADMIN_USERNAME"),
-				os.Getenv("KEYCLOAK_REALM_ADMIN_PASSWORD"),
-			)
+			if utils.GetEnv("DB_MIGRATE", "false") == "true" {
+				database.Migrate()
+			}
+			defer database.Db.Close()
+
+			authServiceAddr := os.Getenv("AUTH_SERVICE_ADDR")
+			authConn, err := external.GrpcClient(authServiceAddr)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer authConn.Close()
 
 			deliveryChan := make(chan ckafka.Event)
 			kafka, err := external.NewKafka(
@@ -64,10 +72,15 @@ func NewGrpcCmd() *cobra.Command {
 			}
 
 			go kafka.DeliveryReport()
-			grpc.StartGrpcServer(grpcPort, keycloak, authService, kafka)
+			grpc.StartGrpcServer(database, authConn, kafka, grpcPort)
 		},
 	}
 
+	dDsn := os.Getenv("DSN")
+	sDsnType := os.Getenv("DSN_TYPE")
+
+	grpcCmd.Flags().StringVarP(&dsn, "dsn", "d", dDsn, "dsn")
+	grpcCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
 	grpcCmd.Flags().IntVarP(&grpcPort, "port", "p", 50051, "gRPC Server port")
 
 	return grpcCmd

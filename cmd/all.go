@@ -22,9 +22,10 @@ import (
 	"runtime"
 
 	"github.com/c-4u/employee-service/application/grpc"
-	"github.com/c-4u/employee-service/application/grpc/pb"
 	"github.com/c-4u/employee-service/application/rest"
+	"github.com/c-4u/employee-service/infrastructure/db"
 	"github.com/c-4u/employee-service/infrastructure/external"
+	"github.com/c-4u/employee-service/utils"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
@@ -34,27 +35,34 @@ import (
 func NewAllCmd() *cobra.Command {
 	var grpcPort int
 	var restPort int
+	var dsn string
+	var dsnType string
 
 	allCmd := &cobra.Command{
 		Use:   "all",
 		Short: "Run both gRPC and rest servers",
 
 		Run: func(cmd *cobra.Command, args []string) {
-			authServiceAddr := os.Getenv("AUTH_SERVICE_ADDR")
-			conn, err := external.ConnectAuthService(authServiceAddr)
+			database, err := db.NewPostgres(dsnType, dsn)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			defer conn.Close()
-			authService := pb.NewAuthKeycloakAclClient(conn)
+			if utils.GetEnv("DB_DEBUG", "false") == "true" {
+				database.Debug(true)
+			}
 
-			keycloak := external.ConnectKeycloak(
-				os.Getenv("KEYCLOAK_BASE_PATH"),
-				os.Getenv("KEYCLOAK_REALM"),
-				os.Getenv("KEYCLOAK_REALM_ADMIN_USERNAME"),
-				os.Getenv("KEYCLOAK_REALM_ADMIN_PASSWORD"),
-			)
+			if utils.GetEnv("DB_MIGRATE", "false") == "true" {
+				database.Migrate()
+			}
+			defer database.Db.Close()
+
+			authServiceAddr := os.Getenv("AUTH_SERVICE_ADDR")
+			authConn, err := external.GrpcClient(authServiceAddr)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer authConn.Close()
 
 			deliveryChan := make(chan ckafka.Event)
 			kafka, err := external.NewKafka(
@@ -66,11 +74,16 @@ func NewAllCmd() *cobra.Command {
 			}
 
 			go kafka.DeliveryReport()
-			go rest.StartRestServer(restPort, keycloak, authService, kafka)
-			grpc.StartGrpcServer(grpcPort, keycloak, authService, kafka)
+			go rest.StartRestServer(database, authConn, kafka, restPort)
+			grpc.StartGrpcServer(database, authConn, kafka, grpcPort)
 		},
 	}
 
+	dDsn := os.Getenv("DSN")
+	sDsnType := os.Getenv("DSN_TYPE")
+
+	allCmd.Flags().StringVarP(&dsn, "dsn", "d", dDsn, "dsn")
+	allCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
 	allCmd.Flags().IntVarP(&grpcPort, "grpcPort", "g", 50051, "gRPC Server port")
 	allCmd.Flags().IntVarP(&restPort, "restPort", "r", 8080, "rest server port")
 

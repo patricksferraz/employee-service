@@ -19,8 +19,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EmployeeServiceClient interface {
 	CreateEmployee(ctx context.Context, in *CreateEmployeeRequest, opts ...grpc.CallOption) (*CreateEmployeeResponse, error)
-	FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*Employee, error)
-	SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*StatusResponse, error)
+	FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*FindEmployeeResponse, error)
+	SearchEmployees(ctx context.Context, in *SearchEmployeesRequest, opts ...grpc.CallOption) (*SearchEmployeesResponse, error)
+	UpdateEmployee(ctx context.Context, in *UpdateEmployeeRequest, opts ...grpc.CallOption) (*StatusResponse, error)
 }
 
 type employeeServiceClient struct {
@@ -40,8 +41,8 @@ func (c *employeeServiceClient) CreateEmployee(ctx context.Context, in *CreateEm
 	return out, nil
 }
 
-func (c *employeeServiceClient) FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*Employee, error) {
-	out := new(Employee)
+func (c *employeeServiceClient) FindEmployee(ctx context.Context, in *FindEmployeeRequest, opts ...grpc.CallOption) (*FindEmployeeResponse, error) {
+	out := new(FindEmployeeResponse)
 	err := c.cc.Invoke(ctx, "/github.com.c_4u.EmployeeService/FindEmployee", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -49,9 +50,18 @@ func (c *employeeServiceClient) FindEmployee(ctx context.Context, in *FindEmploy
 	return out, nil
 }
 
-func (c *employeeServiceClient) SetPassword(ctx context.Context, in *SetPasswordRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
+func (c *employeeServiceClient) SearchEmployees(ctx context.Context, in *SearchEmployeesRequest, opts ...grpc.CallOption) (*SearchEmployeesResponse, error) {
+	out := new(SearchEmployeesResponse)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.EmployeeService/SearchEmployees", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *employeeServiceClient) UpdateEmployee(ctx context.Context, in *UpdateEmployeeRequest, opts ...grpc.CallOption) (*StatusResponse, error) {
 	out := new(StatusResponse)
-	err := c.cc.Invoke(ctx, "/github.com.c_4u.EmployeeService/SetPassword", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/github.com.c_4u.EmployeeService/UpdateEmployee", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +73,9 @@ func (c *employeeServiceClient) SetPassword(ctx context.Context, in *SetPassword
 // for forward compatibility
 type EmployeeServiceServer interface {
 	CreateEmployee(context.Context, *CreateEmployeeRequest) (*CreateEmployeeResponse, error)
-	FindEmployee(context.Context, *FindEmployeeRequest) (*Employee, error)
-	SetPassword(context.Context, *SetPasswordRequest) (*StatusResponse, error)
+	FindEmployee(context.Context, *FindEmployeeRequest) (*FindEmployeeResponse, error)
+	SearchEmployees(context.Context, *SearchEmployeesRequest) (*SearchEmployeesResponse, error)
+	UpdateEmployee(context.Context, *UpdateEmployeeRequest) (*StatusResponse, error)
 	mustEmbedUnimplementedEmployeeServiceServer()
 }
 
@@ -75,11 +86,14 @@ type UnimplementedEmployeeServiceServer struct {
 func (UnimplementedEmployeeServiceServer) CreateEmployee(context.Context, *CreateEmployeeRequest) (*CreateEmployeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateEmployee not implemented")
 }
-func (UnimplementedEmployeeServiceServer) FindEmployee(context.Context, *FindEmployeeRequest) (*Employee, error) {
+func (UnimplementedEmployeeServiceServer) FindEmployee(context.Context, *FindEmployeeRequest) (*FindEmployeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindEmployee not implemented")
 }
-func (UnimplementedEmployeeServiceServer) SetPassword(context.Context, *SetPasswordRequest) (*StatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetPassword not implemented")
+func (UnimplementedEmployeeServiceServer) SearchEmployees(context.Context, *SearchEmployeesRequest) (*SearchEmployeesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchEmployees not implemented")
+}
+func (UnimplementedEmployeeServiceServer) UpdateEmployee(context.Context, *UpdateEmployeeRequest) (*StatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateEmployee not implemented")
 }
 func (UnimplementedEmployeeServiceServer) mustEmbedUnimplementedEmployeeServiceServer() {}
 
@@ -130,20 +144,38 @@ func _EmployeeService_FindEmployee_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EmployeeService_SetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetPasswordRequest)
+func _EmployeeService_SearchEmployees_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchEmployeesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EmployeeServiceServer).SetPassword(ctx, in)
+		return srv.(EmployeeServiceServer).SearchEmployees(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/github.com.c_4u.EmployeeService/SetPassword",
+		FullMethod: "/github.com.c_4u.EmployeeService/SearchEmployees",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EmployeeServiceServer).SetPassword(ctx, req.(*SetPasswordRequest))
+		return srv.(EmployeeServiceServer).SearchEmployees(ctx, req.(*SearchEmployeesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EmployeeService_UpdateEmployee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateEmployeeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EmployeeServiceServer).UpdateEmployee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/github.com.c_4u.EmployeeService/UpdateEmployee",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EmployeeServiceServer).UpdateEmployee(ctx, req.(*UpdateEmployeeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -164,8 +196,12 @@ var EmployeeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EmployeeService_FindEmployee_Handler,
 		},
 		{
-			MethodName: "SetPassword",
-			Handler:    _EmployeeService_SetPassword_Handler,
+			MethodName: "SearchEmployees",
+			Handler:    _EmployeeService_SearchEmployees_Handler,
+		},
+		{
+			MethodName: "UpdateEmployee",
+			Handler:    _EmployeeService_UpdateEmployee_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

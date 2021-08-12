@@ -35,7 +35,7 @@ var doc = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Search for employee employees by ` + "`" + `filter` + "`" + `. if the page and page size are empty, 0 and 10 will be considered respectively.",
+                "description": "Search for employee employees by ` + "`" + `filter` + "`" + `. if the page size is empty, 10 will be considered.",
                 "consumes": [
                     "application/json"
                 ],
@@ -60,14 +60,13 @@ var doc = `{
                     },
                     {
                         "type": "integer",
-                        "default": 0,
-                        "name": "page",
+                        "default": 10,
+                        "name": "page_size",
                         "in": "query"
                     },
                     {
-                        "type": "integer",
-                        "default": 10,
-                        "name": "page_size",
+                        "type": "string",
+                        "name": "page_token",
                         "in": "query"
                     }
                 ],
@@ -77,7 +76,7 @@ var doc = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/rest.EmployeeResponse"
+                                "$ref": "#/definitions/rest.SearchEmployeesResponse"
                             }
                         }
                     },
@@ -120,7 +119,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/rest.EmployeeRequest"
+                            "$ref": "#/definitions/rest.CreateEmployeeRequest"
                         }
                     }
                 ],
@@ -128,7 +127,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.ID"
+                            "$ref": "#/definitions/rest.CreateEmployeeResponse"
                         }
                     },
                     "401": {
@@ -178,7 +177,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.EmployeeResponse"
+                            "$ref": "#/definitions/rest.Employee"
                         }
                     },
                     "400": {
@@ -252,88 +251,24 @@ var doc = `{
                     }
                 }
             }
-        },
-        "/employees/{id}/password": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Router for set a employee password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employee"
-                ],
-                "summary": "set a employee password",
-                "operationId": "setPassword",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Employee ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "JSON body to set a employee password",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/rest.PasswordInfo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPError"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/rest.HTTPError"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
-        "rest.EmployeeRequest": {
+        "rest.CreateEmployeeRequest": {
             "type": "object",
             "required": [
+                "cpf",
                 "email",
-                "email_verified",
-                "enabled",
                 "first_name",
                 "last_name",
-                "pis",
-                "username"
+                "pis"
             ],
             "properties": {
-                "email": {
+                "cpf": {
                     "type": "string"
                 },
-                "email_verified": {
-                    "type": "boolean"
-                },
-                "enabled": {
-                    "type": "boolean"
+                "email": {
+                    "type": "string"
                 },
                 "first_name": {
                     "type": "string"
@@ -343,32 +278,28 @@ var doc = `{
                 },
                 "pis": {
                     "type": "string"
-                },
-                "username": {
+                }
+            }
+        },
+        "rest.CreateEmployeeResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
                     "type": "string"
                 }
             }
         },
-        "rest.EmployeeResponse": {
+        "rest.Employee": {
             "type": "object",
-            "required": [
-                "email",
-                "email_verified",
-                "enabled",
-                "first_name",
-                "last_name",
-                "pis",
-                "username"
-            ],
             "properties": {
+                "cpf": {
+                    "type": "string"
+                },
                 "created_at": {
                     "type": "string"
                 },
                 "email": {
                     "type": "string"
-                },
-                "email_verified": {
-                    "type": "boolean"
                 },
                 "enabled": {
                     "type": "boolean"
@@ -385,7 +316,7 @@ var doc = `{
                 "pis": {
                     "type": "string"
                 },
-                "username": {
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -416,27 +347,17 @@ var doc = `{
                 }
             }
         },
-        "rest.ID": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "string"
-                }
-            }
-        },
-        "rest.PasswordInfo": {
+        "rest.SearchEmployeesResponse": {
             "type": "object",
             "properties": {
-                "password": {
-                    "type": "string",
-                    "example": "mypassword"
+                "employees": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/rest.Employee"
+                    }
                 },
-                "temporary": {
-                    "type": "boolean",
-                    "example": false
+                "next_page_token": {
+                    "type": "string"
                 }
             }
         },
