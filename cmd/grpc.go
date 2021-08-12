@@ -83,9 +83,6 @@ func NewGrpcCmd() *cobra.Command {
 	grpcCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
 	grpcCmd.Flags().IntVarP(&grpcPort, "port", "p", 50051, "gRPC Server port")
 
-	grpcCmd.MarkFlagRequired("dsn")
-	grpcCmd.MarkFlagRequired("dsnType")
-
 	return grpcCmd
 }
 

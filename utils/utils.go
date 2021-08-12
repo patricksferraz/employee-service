@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"bytes"
 	"os"
 	"reflect"
+	"unicode"
 )
 
 func StructToAttr(item interface{}) *map[string][]string {
@@ -35,4 +37,16 @@ func GetEnv(key string, defaultVal string) string {
 	}
 
 	return defaultVal
+}
+
+func CleanNonDigits(str *string) {
+
+	buf := bytes.NewBufferString("")
+	for _, r := range *str {
+		if unicode.IsDigit(r) {
+			buf.WriteRune(r)
+		}
+	}
+
+	*str = buf.String()
 }

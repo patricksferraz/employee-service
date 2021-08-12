@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/c-4u/employee-service/utils"
 	"github.com/paemuri/brdoc"
 	pisvalidator "github.com/patricksferraz/pisvalidator"
 	uuid "github.com/satori/go.uuid"
@@ -26,15 +27,17 @@ type Employee struct {
 	Base      `json:",inline" valid:"required"`
 	FirstName string  `json:"first_name,omitempty" gorm:"column:first_name;type:varchar(50);not null" valid:"required"`
 	LastName  string  `json:"last_name,omitempty" gorm:"column:last_name;type:varchar(255);not null" valid:"required"`
-	Email     string  `json:"email,omitempty" gorm:"column:email;type:varchar(255);not null" valid:"email"`
-	Pis       string  `json:"pis,omitempty" gorm:"column:pis;type:varchar(25);unique" valid:"pis"`
-	Cpf       string  `json:"cpf,omitempty" gorm:"column:pis;type:varchar(25);unique" valid:"cpf"`
+	Email     string  `json:"email,omitempty" gorm:"column:email;type:varchar(255);not null;unique" valid:"email"`
+	Pis       string  `json:"pis,omitempty" gorm:"column:pis;type:varchar(25);not null;unique" valid:"pis"`
+	Cpf       string  `json:"cpf,omitempty" gorm:"column:cpf;type:varchar(25);not null;unique" valid:"cpf"`
 	Enabled   bool    `json:"enabled,omitempty" valid:"-"`
-	Token     *string `json:"-" gorm:"column:token;not null" bson:"token" valid:"-"`
+	Token     *string `json:"-" gorm:"column:token;type:varchar(25);not null" bson:"token" valid:"-"`
 }
 
 func NewEmployee(firstName, lastName, email, pis, cpf string) (*Employee, error) {
 
+	utils.CleanNonDigits(&pis)
+	utils.CleanNonDigits(&cpf)
 	token := primitive.NewObjectID().Hex()
 	employee := &Employee{
 		FirstName: firstName,
