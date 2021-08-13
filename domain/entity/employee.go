@@ -25,18 +25,20 @@ func init() {
 
 type Employee struct {
 	Base          `json:",inline" valid:"required"`
-	FirstName     string  `json:"first_name,omitempty" gorm:"column:first_name;type:varchar(50);not null" valid:"required"`
-	LastName      string  `json:"last_name,omitempty" gorm:"column:last_name;type:varchar(255);not null" valid:"required"`
-	Email         string  `json:"email,omitempty" gorm:"column:email;type:varchar(255);not null;unique" valid:"email"`
-	Pis           string  `json:"pis,omitempty" gorm:"column:pis;type:varchar(25);not null;unique" valid:"pis"`
-	Cpf           string  `json:"cpf,omitempty" gorm:"column:cpf;type:varchar(25);not null;unique" valid:"cpf"`
-	Enabled       bool    `json:"enabled" gorm:"column:enabled;type:bool;not null" valid:"-"`
-	EmailVerified bool    `json:"email_verified" gorm:"column:email_verified;type:bool;not null" valid:"-"`
-	Token         *string `json:"-" gorm:"column:token;type:varchar(25);not null" bson:"token" valid:"-"`
-	User          *User   `json:"user,omitempty" gorm:"ForeignKey:EmployeeID" valid:"-"`
+	FirstName     string   `json:"first_name,omitempty" gorm:"column:first_name;type:varchar(50);not null" valid:"required"`
+	LastName      string   `json:"last_name,omitempty" gorm:"column:last_name;type:varchar(255);not null" valid:"required"`
+	Email         string   `json:"email,omitempty" gorm:"column:email;type:varchar(255);not null;unique" valid:"email"`
+	Pis           string   `json:"pis,omitempty" gorm:"column:pis;type:varchar(25);not null;unique" valid:"pis"`
+	Cpf           string   `json:"cpf,omitempty" gorm:"column:cpf;type:varchar(25);not null;unique" valid:"cpf"`
+	Enabled       bool     `json:"enabled" gorm:"column:enabled;type:bool;not null" valid:"-"`
+	EmailVerified bool     `json:"email_verified" gorm:"column:email_verified;type:bool;not null" valid:"-"`
+	Token         *string  `json:"-" gorm:"column:token;type:varchar(25);not null" bson:"token" valid:"-"`
+	User          *User    `json:"user,omitempty" gorm:"ForeignKey:EmployeeID" valid:"-"`
+	CompanyID     string   `json:"company_id" gorm:"column:company_id;type:uuid;not null" valid:"uuid"`
+	Company       *Company `json:"-" valid:"-"`
 }
 
-func NewEmployee(firstName, lastName, email, pis, cpf string) (*Employee, error) {
+func NewEmployee(firstName, lastName, email, pis, cpf string, company *Company) (*Employee, error) {
 
 	utils.CleanNonDigits(&pis)
 	utils.CleanNonDigits(&cpf)
@@ -50,6 +52,8 @@ func NewEmployee(firstName, lastName, email, pis, cpf string) (*Employee, error)
 		Enabled:       true,
 		EmailVerified: false,
 		Token:         &token,
+		CompanyID:     company.ID,
+		Company:       company,
 	}
 	employee.ID = uuid.NewV4().String()
 	employee.CreatedAt = time.Now()

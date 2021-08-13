@@ -44,7 +44,7 @@ func (s *RestService) CreateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	id, err := s.Service.CreateEmployee(ctx, json.FirstName, json.LastName, json.Email, json.Pis, json.Cpf)
+	id, err := s.Service.CreateEmployee(ctx, json.FirstName, json.LastName, json.Email, json.Pis, json.Cpf, json.CompanyID)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,
@@ -143,7 +143,7 @@ func (s *RestService) SearchEmployees(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK,
 		gin.H{
 			"next_page_token": *nextPageToken,
-			"time_records":    employees,
+			"employees":       employees,
 		},
 	)
 }

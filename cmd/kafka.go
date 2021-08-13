@@ -18,31 +18,26 @@ package cmd
 import (
 	"log"
 	"os"
-	"path/filepath"
-	"runtime"
 
-	"github.com/c-4u/employee-service/application/grpc"
 	"github.com/c-4u/employee-service/application/kafka"
 	"github.com/c-4u/employee-service/infrastructure/db"
 	"github.com/c-4u/employee-service/infrastructure/external"
 	"github.com/c-4u/employee-service/infrastructure/external/topic"
 	"github.com/c-4u/employee-service/utils"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
-// NewGrpcCmd represents the grpc command
-func NewGrpcCmd() *cobra.Command {
-	var grpcPort int
-	var dsn string
-	var dsnType string
+// NewKafkaCmd represents the kafka command
+func NewKafkaCmd() *cobra.Command {
 	var servers string
 	var groupId string
+	var dsn string
+	var dsnType string
 
-	grpcCmd := &cobra.Command{
-		Use:   "grpc",
-		Short: "Run gRPC Service",
+	var kafkaCmd = &cobra.Command{
+		Use:   "kafka",
+		Short: "Run kafka Service",
 
 		Run: func(cmd *cobra.Command, args []string) {
 			database, err := db.NewPostgres(dsnType, dsn)
@@ -59,22 +54,12 @@ func NewGrpcCmd() *cobra.Command {
 			}
 			defer database.Db.Close()
 
-			authServiceAddr := os.Getenv("AUTH_SERVICE_ADDR")
-			authConn, err := external.GrpcClient(authServiceAddr)
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer authConn.Close()
-
 			deliveryChan := make(chan ckafka.Event)
 			k, err := external.NewKafka(servers, groupId, []string{topic.NEW_USER, topic.NEW_COMPANY}, deliveryChan)
 			if err != nil {
-				log.Fatal(err)
+				log.Fatal("cannot start kafka processor", err)
 			}
-
-			go k.DeliveryReport()
-			go kafka.StartKafkaProcessor(database, servers, groupId, k)
-			grpc.StartGrpcServer(database, authConn, k, grpcPort)
+			kafka.StartKafkaProcessor(database, servers, groupId, k)
 		},
 	}
 
@@ -83,35 +68,24 @@ func NewGrpcCmd() *cobra.Command {
 	dServers := utils.GetEnv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9094")
 	dGroupId := utils.GetEnv("KAFKA_CONSUMER_GROUP_ID", "employee-service")
 
-	grpcCmd.Flags().StringVarP(&dsn, "dsn", "d", dDsn, "dsn")
-	grpcCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
-	grpcCmd.Flags().StringVarP(&servers, "servers", "s", dServers, "kafka servers")
-	grpcCmd.Flags().StringVarP(&groupId, "groupId", "i", dGroupId, "kafka group id")
-	grpcCmd.Flags().IntVarP(&grpcPort, "port", "p", 50051, "gRPC Server port")
+	kafkaCmd.Flags().StringVarP(&dsn, "dsn", "d", dDsn, "dsn")
+	kafkaCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
+	kafkaCmd.Flags().StringVarP(&servers, "servers", "s", dServers, "kafka servers")
+	kafkaCmd.Flags().StringVarP(&groupId, "groupId", "i", dGroupId, "kafka group id")
 
-	return grpcCmd
+	return kafkaCmd
 }
 
 func init() {
-	_, b, _, _ := runtime.Caller(0)
-	basepath := filepath.Dir(b)
-
-	if os.Getenv("ENV") == "dev" {
-		err := godotenv.Load(basepath + "/../.env")
-		if err != nil {
-			log.Printf("Error loading .env files")
-		}
-	}
-
-	rootCmd.AddCommand(NewGrpcCmd())
+	rootCmd.AddCommand(NewAllCmd())
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// grpcCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// kafkaCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// grpcCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// kafkaCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

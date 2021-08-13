@@ -241,6 +241,7 @@
         "rest.CreateEmployeeRequest": {
             "type": "object",
             "required": [
+                "company_id",
                 "cpf",
                 "email",
                 "first_name",
@@ -248,6 +249,9 @@
                 "pis"
             ],
             "properties": {
+                "company_id": {
+                    "type": "string"
+                },
                 "cpf": {
                     "type": "string"
                 },
@@ -276,6 +280,9 @@
         "rest.Employee": {
             "type": "object",
             "properties": {
+                "company_id": {
+                    "type": "string"
+                },
                 "cpf": {
                     "type": "string"
                 },

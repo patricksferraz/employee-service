@@ -10,21 +10,21 @@ func init() {
 	govalidator.SetFieldsRequiredByDefault(true)
 }
 
-type UserEvent struct {
-	ID   string `json:"id,omitempty" valid:"uuid"`
-	User *User  `json:"user,omitempty" valid:"required"`
+type CompanyEvent struct {
+	ID      string   `json:"id,omitempty" valid:"uuid"`
+	Company *Company `json:"company,omitempty" valid:"required"`
 }
 
-func NewUserEvent() *UserEvent {
-	return &UserEvent{}
+func NewCompanyEvent() *CompanyEvent {
+	return &CompanyEvent{}
 }
 
-func (e *UserEvent) isValid() error {
+func (e *CompanyEvent) isValid() error {
 	_, err := govalidator.ValidateStruct(e)
 	return err
 }
 
-func (e *UserEvent) ParseJson(data []byte) error {
+func (e *CompanyEvent) ParseJson(data []byte) error {
 	err := json.Unmarshal(data, e)
 	if err != nil {
 		return err

@@ -42,19 +42,39 @@ func (p *KafkaProcessor) processMessage(msg *ckafka.Message) {
 		if err != nil {
 			fmt.Println("creation error ", err)
 		}
+	case topic.NEW_COMPANY:
+		err := p.createCompany(msg)
+		if err != nil {
+			fmt.Println("creation error ", err)
+		}
 	default:
 		fmt.Println("not a valid topic", string(msg.Value))
 	}
 }
 
 func (p *KafkaProcessor) createUser(msg *ckafka.Message) error {
-	userEvent := &schema.UserEvent{}
+	userEvent := schema.NewUserEvent()
 	err := userEvent.ParseJson(msg.Value)
 	if err != nil {
 		return err
 	}
 
-	err = p.Service.CreateUser(context.TODO(), userEvent.ID, userEvent.User.Username, userEvent.User.EmployeeID)
+	err = p.Service.CreateUser(context.TODO(), userEvent.User.ID, userEvent.User.Username, userEvent.User.EmployeeID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *KafkaProcessor) createCompany(msg *ckafka.Message) error {
+	companyEvent := schema.NewCompanyEvent()
+	err := companyEvent.ParseJson(msg.Value)
+	if err != nil {
+		return err
+	}
+
+	err = p.Service.CreateCompany(context.TODO(), companyEvent.Company.ID)
 	if err != nil {
 		return err
 	}

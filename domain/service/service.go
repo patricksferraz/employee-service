@@ -18,8 +18,13 @@ func NewService(repository repository.RepositoryInterface) *Service {
 	}
 }
 
-func (s *Service) CreateEmployee(ctx context.Context, firstName, lastName, email, pis, cpf string) (*string, error) {
-	employee, err := entity.NewEmployee(firstName, lastName, email, pis, cpf)
+func (s *Service) CreateEmployee(ctx context.Context, firstName, lastName, email, pis, cpf, companyID string) (*string, error) {
+	company, err := s.Repository.FindCompany(ctx, companyID)
+	if err != nil {
+		return nil, err
+	}
+
+	employee, err := entity.NewEmployee(firstName, lastName, email, pis, cpf, company)
 	if err != nil {
 		return nil, err
 	}
@@ -117,6 +122,20 @@ func (s *Service) CreateUser(ctx context.Context, id, username, employeeID strin
 	}
 
 	err = s.Repository.CreateUser(ctx, user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) CreateCompany(ctx context.Context, id string) error {
+	company, err := entity.NewCompany(id)
+	if err != nil {
+		return err
+	}
+
+	err = s.Repository.CreateCompany(ctx, company)
 	if err != nil {
 		return err
 	}

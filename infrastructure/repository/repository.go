@@ -53,7 +53,7 @@ func (r *Repository) SearchEmployees(ctx context.Context, filter *entity.Filter)
 		q = q.Where("token < ?", filter.PageToken)
 	}
 
-	err := q.Find(&employees).Error
+	err := q.Preload("User").Find(&employees).Error
 	if err != nil {
 		return nil, nil, err
 	}
@@ -88,4 +88,20 @@ func (r *Repository) PublishEvent(ctx context.Context, msg, topic, key string) e
 func (r *Repository) CreateUser(ctx context.Context, user *entity.User) error {
 	err := r.P.Db.Create(user).Error
 	return err
+}
+
+func (r *Repository) CreateCompany(ctx context.Context, company *entity.Company) error {
+	err := r.P.Db.Create(company).Error
+	return err
+}
+
+func (r *Repository) FindCompany(ctx context.Context, id string) (*entity.Company, error) {
+	var company entity.Company
+	r.P.Db.First(&company, "id = ?", id)
+
+	if company.ID == "" {
+		return nil, fmt.Errorf("no company found")
+	}
+
+	return &company, nil
 }
