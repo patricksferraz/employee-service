@@ -2,6 +2,8 @@ basePath: /api/v1
 definitions:
   rest.CreateEmployeeRequest:
     properties:
+      company_id:
+        type: string
       cpf:
         type: string
       email:
@@ -13,6 +15,7 @@ definitions:
       pis:
         type: string
     required:
+    - company_id
     - cpf
     - email
     - first_name
@@ -26,6 +29,8 @@ definitions:
     type: object
   rest.Employee:
     properties:
+      company_id:
+        type: string
       cpf:
         type: string
       created_at:

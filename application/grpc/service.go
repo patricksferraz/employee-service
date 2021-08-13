@@ -29,6 +29,7 @@ func (s *GrpcService) CreateEmployee(ctx context.Context, in *pb.CreateEmployeeR
 		in.Employee.Email,
 		in.Employee.Pis,
 		in.Employee.Cpf,
+		in.Employee.CompanyId,
 	)
 	if err != nil {
 		return &pb.CreateEmployeeResponse{}, err
@@ -52,6 +53,7 @@ func (s *GrpcService) FindEmployee(ctx context.Context, in *pb.FindEmployeeReque
 			Pis:       employee.Pis,
 			Cpf:       employee.Cpf,
 			Enabled:   employee.Enabled,
+			CompanyId: employee.CompanyID,
 			CreatedAt: timestamppb.New(employee.CreatedAt),
 			UpdatedAt: timestamppb.New(employee.UpdatedAt),
 		},
@@ -76,6 +78,7 @@ func (s *GrpcService) SearchEmployees(ctx context.Context, in *pb.SearchEmployee
 				Pis:       employee.Pis,
 				Cpf:       employee.Cpf,
 				Enabled:   employee.Enabled,
+				CompanyId: employee.CompanyID,
 				CreatedAt: timestamppb.New(employee.CreatedAt),
 				UpdatedAt: timestamppb.New(employee.UpdatedAt),
 			},

@@ -69,7 +69,7 @@ func NewAllCmd() *cobra.Command {
 			defer authConn.Close()
 
 			deliveryChan := make(chan ckafka.Event)
-			k, err := external.NewKafka(servers, groupId, []string{topic.NEW_USER}, deliveryChan)
+			k, err := external.NewKafka(servers, groupId, []string{topic.NEW_USER, topic.NEW_COMPANY}, deliveryChan)
 			if err != nil {
 				log.Fatal(err)
 			}
