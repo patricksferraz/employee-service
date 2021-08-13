@@ -54,7 +54,7 @@ func (p *KafkaProcessor) createUser(msg *ckafka.Message) error {
 		return err
 	}
 
-	err = p.Service.CreateUser(context.TODO(), userEvent.ID, userEvent.User.Username, userEvent.User.EmployeeID)
+	err = p.Service.CreateUser(context.TODO(), userEvent.User.ID, userEvent.User.Username, userEvent.User.EmployeeID)
 	if err != nil {
 		return err
 	}

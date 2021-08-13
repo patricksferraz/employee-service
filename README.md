@@ -170,7 +170,7 @@ __Prerequisites__:
   EMPLOYEE_GRPC_PORT=50053
   EMPLOYEE_REST_PORT=8090
 
-  POSTGRES_DB=time-record-service
+  POSTGRES_DB=employee-service
   POSTGRES_USER=postgres
   POSTGRES_PASSWORD=password
   DB_MIGRATE=true

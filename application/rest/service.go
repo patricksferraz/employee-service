@@ -143,7 +143,7 @@ func (s *RestService) SearchEmployees(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK,
 		gin.H{
 			"next_page_token": *nextPageToken,
-			"time_records":    employees,
+			"employees":       employees,
 		},
 	)
 }

@@ -81,7 +81,7 @@ func NewGrpcCmd() *cobra.Command {
 	dDsn := os.Getenv("DSN")
 	sDsnType := os.Getenv("DSN_TYPE")
 	dServers := utils.GetEnv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9094")
-	dGroupId := utils.GetEnv("KAFKA_CONSUMER_GROUP_ID", "time-record-service")
+	dGroupId := utils.GetEnv("KAFKA_CONSUMER_GROUP_ID", "employee-service")
 
 	grpcCmd.Flags().StringVarP(&dsn, "dsn", "d", dDsn, "dsn")
 	grpcCmd.Flags().StringVarP(&dsnType, "dsnType", "t", sDsnType, "dsn type")
