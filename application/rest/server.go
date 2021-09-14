@@ -50,10 +50,10 @@ func StartRestServer(database *db.Postgres, authConn *grpc.ClientConn, kafka *ex
 	service := _service.NewService(repository)
 	restService := NewRestService(service)
 
-	v1 := r.Group("api/v1/employees")
+	v1 := r.Group("api/v1")
 	{
 		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		authorized := v1.Group("", authMiddlerare.Require())
+		authorized := v1.Group("/employees", authMiddlerare.Require())
 		{
 			authorized.POST("", restService.CreateEmployee)
 			authorized.GET("", restService.SearchEmployees)

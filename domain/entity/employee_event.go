@@ -7,6 +7,10 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+func init() {
+	govalidator.SetFieldsRequiredByDefault(true)
+}
+
 type EmployeeEvent struct {
 	ID       string    `json:"id,omitempty" valid:"uuid"`
 	Employee *Employee `json:"employee,omitempty" valid:"-"`

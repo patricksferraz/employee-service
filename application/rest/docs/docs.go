@@ -257,7 +257,6 @@ var doc = `{
         "rest.CreateEmployeeRequest": {
             "type": "object",
             "required": [
-                "company_id",
                 "cpf",
                 "email",
                 "first_name",
@@ -265,9 +264,6 @@ var doc = `{
                 "pis"
             ],
             "properties": {
-                "company_id": {
-                    "type": "string"
-                },
                 "cpf": {
                     "type": "string"
                 },
@@ -296,8 +292,11 @@ var doc = `{
         "rest.Employee": {
             "type": "object",
             "properties": {
-                "company_id": {
-                    "type": "string"
+                "companies": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "cpf": {
                     "type": "string"
