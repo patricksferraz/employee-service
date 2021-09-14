@@ -10,13 +10,13 @@ type Base struct {
 
 type Employee struct {
 	Base      `json:",inline"`
-	FirstName string `json:"first_name,omitempty"`
-	LastName  string `json:"last_name,omitempty"`
-	Email     string `json:"email,omitempty"`
-	Pis       string `json:"pis,omitempty"`
-	Cpf       string `json:"cpf,omitempty"`
-	Enabled   bool   `json:"enabled"`
-	CompanyID string `json:"company_id"`
+	FirstName string   `json:"first_name,omitempty"`
+	LastName  string   `json:"last_name,omitempty"`
+	Email     string   `json:"email,omitempty"`
+	Pis       string   `json:"pis,omitempty"`
+	Cpf       string   `json:"cpf,omitempty"`
+	Enabled   bool     `json:"enabled"`
+	Companies []string `json:"companies"`
 }
 
 type CreateEmployeeRequest struct {
@@ -25,7 +25,6 @@ type CreateEmployeeRequest struct {
 	Email     string `json:"email" binding:"required"`
 	Pis       string `json:"pis" binding:"required"`
 	Cpf       string `json:"cpf" binding:"required"`
-	CompanyID string `json:"company_id" binding:"required"`
 }
 
 type CreateEmployeeResponse struct {

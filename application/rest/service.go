@@ -44,7 +44,7 @@ func (s *RestService) CreateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	id, err := s.Service.CreateEmployee(ctx, json.FirstName, json.LastName, json.Email, json.Pis, json.Cpf, json.CompanyID)
+	id, err := s.Service.CreateEmployee(ctx, json.FirstName, json.LastName, json.Email, json.Pis, json.Cpf)
 	if err != nil {
 		ctx.JSON(
 			http.StatusForbidden,
