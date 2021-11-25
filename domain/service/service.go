@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/c-4u/employee-service/domain/entity"
+	"github.com/c-4u/employee-service/domain/entity/event"
+	"github.com/c-4u/employee-service/domain/entity/filter"
 	"github.com/c-4u/employee-service/domain/repository"
 	"github.com/c-4u/employee-service/infrastructure/external/topic"
 )
@@ -29,7 +31,7 @@ func (s *Service) CreateEmployee(ctx context.Context, firstName, lastName, email
 		return nil, err
 	}
 
-	event, err := entity.NewEmployeeEvent(employee)
+	event, err := event.NewEmployeeEvent(employee)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +58,7 @@ func (s *Service) FindEmployee(ctx context.Context, id string) (*entity.Employee
 }
 
 func (s *Service) SearchEmployees(ctx context.Context, firstName, lastName string, pageSize int, pageToken string) (*string, []*entity.Employee, error) {
-	filter, err := entity.NewFilter(firstName, lastName, pageSize, pageToken)
+	filter, err := filter.NewEmployeeFilter(firstName, lastName, pageSize, pageToken)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -88,7 +90,7 @@ func (s *Service) UpdateEmployee(ctx context.Context, id, firstName, lastName, e
 		return err
 	}
 
-	event, err := entity.NewEmployeeEvent(employee)
+	event, err := event.NewEmployeeEvent(employee)
 	if err != nil {
 		return err
 	}

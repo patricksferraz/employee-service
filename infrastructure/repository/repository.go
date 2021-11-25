@@ -5,20 +5,21 @@ import (
 	"fmt"
 
 	"github.com/c-4u/employee-service/domain/entity"
+	"github.com/c-4u/employee-service/domain/entity/filter"
 	"github.com/c-4u/employee-service/infrastructure/db"
 	"github.com/c-4u/employee-service/infrastructure/external"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
 type Repository struct {
-	P     *db.Postgres
-	Kafka *external.Kafka
+	P *db.Postgres
+	K *external.KafkaProducer
 }
 
-func NewRepository(postgres *db.Postgres, kafka *external.Kafka) *Repository {
+func NewRepository(postgres *db.Postgres, kafkaProducer *external.KafkaProducer) *Repository {
 	return &Repository{
-		P:     postgres,
-		Kafka: kafka,
+		P: postgres,
+		K: kafkaProducer,
 	}
 }
 
@@ -38,7 +39,7 @@ func (r *Repository) FindEmployee(ctx context.Context, id string) (*entity.Emplo
 	return &employee, nil
 }
 
-func (r *Repository) SearchEmployees(ctx context.Context, filter *entity.Filter) (*string, []*entity.Employee, error) {
+func (r *Repository) SearchEmployees(ctx context.Context, filter *filter.EmployeeFilter) (*string, []*entity.Employee, error) {
 	var employees []*entity.Employee
 
 	q := r.P.Db.Order("token desc").Limit(filter.PageSize)
@@ -78,7 +79,7 @@ func (r *Repository) PublishEvent(ctx context.Context, msg, topic, key string) e
 		Value:          []byte(msg),
 		Key:            []byte(key),
 	}
-	err := r.Kafka.Producer.Produce(message, r.Kafka.DeliveryChan)
+	err := r.K.Producer.Produce(message, r.K.DeliveryChan)
 	if err != nil {
 		return err
 	}

@@ -9,11 +9,11 @@ import (
 	"github.com/c-4u/employee-service/infrastructure/repository"
 )
 
-func StartKafkaProcessor(database *db.Postgres, servers, groupId string, kafka *external.Kafka) {
-	repository := repository.NewRepository(database, kafka)
+func StartKafkaServer(database *db.Postgres, kafkaProducer *external.KafkaProducer, kafkaConsumer *external.KafkaConsumer) {
+	repository := repository.NewRepository(database, kafkaProducer)
 	service := service.NewService(repository)
 
 	fmt.Println("kafka consumer has been started")
-	processor := NewKafkaProcessor(service, kafka)
+	processor := NewKafkaProcessor(service, kafkaConsumer)
 	processor.Consume()
 }

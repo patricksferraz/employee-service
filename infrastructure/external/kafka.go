@@ -6,23 +6,12 @@ import (
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
-type Kafka struct {
-	Consumer      *ckafka.Consumer
-	Producer      *ckafka.Producer
-	ConsumeTopics []string
-	DeliveryChan  chan ckafka.Event
+type KafkaConsumer struct {
+	Consumer       *ckafka.Consumer
+	ConsumerTopics []string
 }
 
-func NewKafka(servers string, groupId string, consumeTopics []string, deliveryChan chan ckafka.Event) (*Kafka, error) {
-	p, err := ckafka.NewProducer(
-		&ckafka.ConfigMap{
-			"bootstrap.servers": servers,
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
+func NewKafkaConsumer(servers, groupId string, consumerTopics []string) (*KafkaConsumer, error) {
 	c, err := ckafka.NewConsumer(
 		&ckafka.ConfigMap{
 			"bootstrap.servers": servers,
@@ -34,16 +23,35 @@ func NewKafka(servers string, groupId string, consumeTopics []string, deliveryCh
 		return nil, err
 	}
 
-	return &Kafka{
-		Consumer:      c,
-		Producer:      p,
-		ConsumeTopics: consumeTopics,
-		DeliveryChan:  deliveryChan,
+	return &KafkaConsumer{
+		Consumer:       c,
+		ConsumerTopics: consumerTopics,
+	}, nil
+}
+
+type KafkaProducer struct {
+	Producer     *ckafka.Producer
+	DeliveryChan chan ckafka.Event
+}
+
+func NewKafkaProducer(servers string, deliveryChan chan ckafka.Event) (*KafkaProducer, error) {
+	p, err := ckafka.NewProducer(
+		&ckafka.ConfigMap{
+			"bootstrap.servers": servers,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &KafkaProducer{
+		Producer:     p,
+		DeliveryChan: deliveryChan,
 	}, nil
 }
 
 // TODO: Add event log
-func (k *Kafka) DeliveryReport() {
+func (k *KafkaProducer) DeliveryReport() {
 	for e := range k.DeliveryChan {
 		switch ev := e.(type) {
 		case *ckafka.Message:

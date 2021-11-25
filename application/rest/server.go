@@ -31,7 +31,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-func StartRestServer(database *db.Postgres, authConn *grpc.ClientConn, kafka *external.Kafka, port int) {
+func StartRestServer(database *db.Postgres, authConn *grpc.ClientConn, kafkaProducer *external.KafkaProducer, port int) {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -46,7 +46,7 @@ func StartRestServer(database *db.Postgres, authConn *grpc.ClientConn, kafka *ex
 
 	authService := _service.NewAuthService(authConn)
 	authMiddlerare := NewAuthMiddleware(authService)
-	repository := repository.NewRepository(database, kafka)
+	repository := repository.NewRepository(database, kafkaProducer)
 	service := _service.NewService(repository)
 	restService := NewRestService(service)
 
