@@ -22,10 +22,8 @@ import (
 	"runtime"
 
 	"github.com/c-4u/employee-service/application/grpc"
-	"github.com/c-4u/employee-service/application/kafka"
 	"github.com/c-4u/employee-service/infrastructure/db"
 	"github.com/c-4u/employee-service/infrastructure/external"
-	"github.com/c-4u/employee-service/infrastructure/external/topic"
 	"github.com/c-4u/employee-service/utils"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/joho/godotenv"
@@ -67,13 +65,12 @@ func NewGrpcCmd() *cobra.Command {
 			defer authConn.Close()
 
 			deliveryChan := make(chan ckafka.Event)
-			k, err := external.NewKafka(servers, groupId, []string{topic.NEW_USER, topic.NEW_COMPANY}, deliveryChan)
+			k, err := external.NewKafkaProducer(servers, deliveryChan)
 			if err != nil {
-				log.Fatal(err)
+				log.Fatal("cannot start kafka producer", err)
 			}
 
 			go k.DeliveryReport()
-			go kafka.StartKafkaProcessor(database, servers, groupId, k)
 			grpc.StartGrpcServer(database, authConn, k, grpcPort)
 		},
 	}

@@ -1,9 +1,10 @@
-package entity
+package event
 
 import (
 	"encoding/json"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/c-4u/employee-service/domain/entity"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -12,11 +13,11 @@ func init() {
 }
 
 type EmployeeEvent struct {
-	ID       string    `json:"id,omitempty" valid:"uuid"`
-	Employee *Employee `json:"employee,omitempty" valid:"-"`
+	ID       string           `json:"id,omitempty" valid:"uuid"`
+	Employee *entity.Employee `json:"employee,omitempty" valid:"-"`
 }
 
-func NewEmployeeEvent(employee *Employee) (*EmployeeEvent, error) {
+func NewEmployeeEvent(employee *entity.Employee) (*EmployeeEvent, error) {
 	e := &EmployeeEvent{
 		ID:       uuid.NewV4().String(),
 		Employee: employee,
