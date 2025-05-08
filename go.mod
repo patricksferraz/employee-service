@@ -1,4 +1,4 @@
-module github.com/c-4u/employee-service
+module github.com/patricksferraz/employee-service
 
 go 1.16
 

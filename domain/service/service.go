@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 
-	"github.com/c-4u/employee-service/domain/entity"
-	"github.com/c-4u/employee-service/domain/entity/event"
-	"github.com/c-4u/employee-service/domain/entity/filter"
-	"github.com/c-4u/employee-service/domain/repository"
-	"github.com/c-4u/employee-service/infrastructure/external/topic"
+	"github.com/patricksferraz/employee-service/domain/entity"
+	"github.com/patricksferraz/employee-service/domain/entity/event"
+	"github.com/patricksferraz/employee-service/domain/entity/filter"
+	"github.com/patricksferraz/employee-service/domain/repository"
+	"github.com/patricksferraz/employee-service/infrastructure/external/topic"
 )
 
 type Service struct {

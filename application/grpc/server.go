@@ -5,11 +5,11 @@ import (
 	"log"
 	"net"
 
-	"github.com/c-4u/employee-service/application/grpc/pb"
-	_service "github.com/c-4u/employee-service/domain/service"
-	"github.com/c-4u/employee-service/infrastructure/db"
-	"github.com/c-4u/employee-service/infrastructure/external"
-	"github.com/c-4u/employee-service/infrastructure/repository"
+	"github.com/patricksferraz/employee-service/application/grpc/pb"
+	_service "github.com/patricksferraz/employee-service/domain/service"
+	"github.com/patricksferraz/employee-service/infrastructure/db"
+	"github.com/patricksferraz/employee-service/infrastructure/external"
+	"github.com/patricksferraz/employee-service/infrastructure/repository"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )

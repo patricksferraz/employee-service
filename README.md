@@ -1,247 +1,145 @@
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Thanks again! Now go create something AMAZING! :D
-***
-***
-***
-*** To avoid retyping too much info. Do a search and replace for the following:
-*** github_username, repo_name, twitter_handle, email, project_title, project_description
--->
+# Employee Service
 
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
+[![Go Report Card](https://goreportcard.com/badge/github.com/patricksferraz/employee-service)](https://goreportcard.com/report/github.com/patricksferraz/employee-service)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![GoDoc](https://godoc.org/github.com/patricksferraz/employee-service?status.svg)](https://godoc.org/github.com/patricksferraz/employee-service)
 
-<!-- PROJECT LOGO -->
-<br />
-<p align="center">
-  <a href="https://github.com/c-4u/employee-service">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>
+A modern, scalable microservice for employee management built with Go, featuring both REST and gRPC APIs, event-driven architecture, and comprehensive monitoring.
 
-  <h3 align="center">TimeClock - Emloyee Service</h3>
+## 🚀 Features
 
-  <p align="center">
-    Microservice that provides resources for managing employees
-    <br />
-    <a href="https://github.com/c-4u/employee-service"><strong>Explore the docs »</strong></a>
-    <!-- <br />
-    <br />
-    <a href="https://github.com/c-4u/employee-service">View Demo</a>
-    ·
-    <a href="https://github.com/c-4u/employee-service">Report Bug</a>
-    ·
-    <a href="https://github.com/c-4u/employee-service">Request Feature</a>-->
-  </p>
-</p>
+- **Dual API Support**: REST and gRPC endpoints for maximum flexibility
+- **Event-Driven Architecture**: Kafka integration for real-time employee updates
+- **Database Management**: PostgreSQL with GORM for robust data persistence
+- **API Documentation**: Swagger/OpenAPI integration
+- **Monitoring**: Elastic APM integration for performance monitoring
+- **Containerized**: Docker and Docker Compose support
+- **Kubernetes Ready**: Includes K8s deployment configurations
+- **Environment Configuration**: Flexible configuration management with Viper
+- **Input Validation**: Comprehensive validation using govalidator
+- **CORS Support**: Built-in CORS middleware
+- **Database Administration**: PGAdmin included for database management
+- **Kafka Management**: Confluent Control Center for Kafka monitoring
 
-<!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <!-- <li><a href="#usage">Usage</a></li> -->
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <!-- <li><a href="#license">License</a></li> -->
-    <li><a href="#contact">Contact</a></li>
-    <!-- <li><a href="#acknowledgements">Acknowledgements</a></li> -->
-  </ol>
-</details>
+## 🛠️ Tech Stack
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
+- **Language**: Go 1.16+
+- **Web Framework**: Gin
+- **Database**: PostgreSQL
+- **ORM**: GORM
+- **Message Broker**: Apache Kafka
+- **API Documentation**: Swagger/OpenAPI
+- **Monitoring**: Elastic APM
+- **Containerization**: Docker
+- **Orchestration**: Kubernetes
+- **Configuration**: Viper
+- **Validation**: govalidator
 
-Employee Service is a microservice that provides resources for managing employees, it provides an API that makes it possible to establish a communication using REST and gRPC.
+## 📋 Prerequisites
 
-<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
-<!--
-Here's a blank template to get started:
-**To avoid retyping too much info. Do a search and replace with your text editor for the following:**
-`github_username`, `repo_name`, `twitter_handle`, `email`, `project_title`, `project_description` -->
+- Go 1.16 or higher
+- Docker and Docker Compose
+- Make (for using Makefile commands)
+- PostgreSQL client (optional)
+- Kafka client (optional)
 
-### Built With
+## 🚀 Getting Started
 
-- [Go Lang](https://golang.org/)
-- List all: `go list -m all`
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-To get a local copy up and running follow these simple steps.
-
-### Prerequisites
-
-- Hiring a kubernetes cluster:
-  - [AWS](https://aws.amazon.com/pt/eks/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc&eks-blogs.sort-by=item.additionalFields.createdDate&eks-blogs.sort-order=desc)
-  - [Azure](https://azure.microsoft.com/pt-br/services/kubernetes-service/)
-  - [GCP](https://cloud.google.com/kubernetes-engine)
-
-- [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
-
-- Create a secret for docker registry
-
-  ```sh
-  kubectl create secret docker-registry regcred \
-  --docker-server=$DOCKER_REGISTRY_SERVER \
-  --docker-username=$DOCKER_USER \
-  --docker-password=$DOCKER_PASSWORD \
-  --docker-email=$DOCKER_EMAIL
-  ```
-
-- Create a secret with env credentials
-
-  ```sh
-  # file: credentials
-  DB_DEBUG=true
-  DB_MIGRATE=true
-  DSN_TYPE=postgres
-  DSN="dbname=employee-service sslmode=disable user=postgres password=pasword host=postgres"
-  ```
-
-  `kubectl create secret generic employee-secret --from-env-file ./credentials`
-
-### Deploy
-
-- `kubectl apply -f ./k8s`
-
-<!-- USAGE EXAMPLES -->
-<!-- ## Usage
-
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_ -->
-
-<!-- ROADMAP -->
-## Roadmap
-
-See the [open issues](https://github.com/c-4u/employee-service/issues) for a list of proposed features (and known issues).
-
-<!-- CONTRIBUTING -->
-## Contributing
-
-Any contributions you make are **greatly appreciated**.
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-__Prerequisites__:
-
-- Golang
-
-  ```sh
-  wget https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
-  rm -rf /usr/local/go && tar -C /usr/local -xzf go1.16.2.linux-amd64.tar.gz
-  export PATH=$PATH:/usr/local/go/bin
-  ```
-
-- Docker and docker-compose
-
-  ```sh
-  sudo apt-get install docker docker-compose docker.io -y
-  ```
-
-- Environment
-
-  ```sh
-  # see .env.example
-  EMPLOYEE_GRPC_PORT=50053
-  EMPLOYEE_REST_PORT=8090
-
-  POSTGRES_DB=employee-service
-  POSTGRES_USER=postgres
-  POSTGRES_PASSWORD=password
-  DB_MIGRATE=true
-  DB_DEBUG=true
-  DB_PORT=5432
-
-  DSN_TYPE=postgres
-  DSN="dbname=${POSTGRES_DB} sslmode=disable user=${POSTGRES_USER} password=${POSTGRES_PASSWORD} host=postgres"
-
-  PGADMIN_DEFAULT_EMAIL=admin@user.com
-  PGADMIN_DEFAULT_PASSWORD=123456
-
-  AUTH_SERVICE_ADDR=auth-keycloak-acl:50051
-
-  ELASTIC_APM_SERVER_URL=http://apm-server:8200
-
-  KAFKA_BOOTSTRAP_SERVERS=kafka:9094
-  KAFKA_CONSUMER_GROUP_ID=employee-service
-  ```
-
-__Installation__:
-
-1. Clone the repo
-
-   ```sh
-   git clone https://github.com/c-4u/employee-service.git
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/patricksferraz/employee-service.git
+   cd employee-service
    ```
 
-2. Run
+2. Copy the environment file and configure it:
+   ```bash
+   cp .env.example .env
+   ```
 
-   ```sh
+3. Start the services using Docker Compose:
+   ```bash
    make up
    ```
 
-3. Test
+4. The service will be available at:
+   - REST API: http://localhost:8080
+   - gRPC: localhost:50051
+   - PGAdmin: http://localhost:9000
+   - Kafka Control Center: http://localhost:9021
 
-   ```sh
-   make gtest
-   ```
+## 🏗️ Project Structure
 
-__Installation in local kubernetes__:
+```
+.
+├── application/     # Application layer (use cases)
+├── cmd/            # Command line interface
+├── domain/         # Domain models and interfaces
+├── infrastructure/ # Infrastructure implementations
+├── k8s/           # Kubernetes configurations
+├── utils/         # Utility functions
+└── .docker/       # Docker related files
+```
 
-1. Install [k3d](https://k3d.io/), [Kind](https://kind.sigs.k8s.io/) or similar
-2. Install [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl) and [Helm](https://helm.sh/)
-3. Follow the steps of [Getting Started](#getting-started)
-    - Connect to cluster
-    - For the local keycloak, run:
+## 🔧 Configuration
 
-      `helm install keycloak codecentric/keycloak`
+The service can be configured using environment variables or a configuration file. See `.env.example` for all available options.
 
-    - [optional] For the local apm-server, run:
-      `helm install apm-server elastic/apm-server`
+## 📚 API Documentation
 
-    - finally, run:
+Once the service is running, you can access the Swagger documentation at:
+```
+http://localhost:8080/swagger/index.html
+```
 
-      `kubectl apply -f k8s/`
-<!-- LICENSE -->
-<!-- ## License -->
+## 🧪 Testing
 
-<!-- Distributed under the MIT License. See `LICENSE` for more information. -->
+Run the tests using:
+```bash
+make test
+```
 
-<!-- CONTACT -->
-## Contact
+## 🐳 Docker
 
-Coding4u - contato@coding4u.com.br - [website](http://coding4u.com.br)
+Build and run the service using Docker:
+```bash
+make build
+make up
+```
 
-Project Link: [auth-service](https://github.com/c-4u/employee-service)
+## ☸️ Kubernetes
 
-<!-- ACKNOWLEDGEMENTS -->
-<!-- ## Acknowledgements
+Deploy to Kubernetes using the configurations in the `k8s/` directory:
+```bash
+kubectl apply -f k8s/
+```
 
-* []()
-* []()
-* []() -->
+## 📈 Monitoring
+
+The service integrates with Elastic APM for monitoring. Access the APM dashboard to view:
+- Request latency
+- Error rates
+- Transaction traces
+- Service maps
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## 👥 Authors
+
+- **Patrick Ferraz** - *Initial work* - [patricksferraz](https://github.com/patricksferraz)
+
+## 🙏 Acknowledgments
+
+- [Gin Web Framework](https://github.com/gin-gonic/gin)
+- [GORM](https://gorm.io/)
+- [Confluent Kafka](https://www.confluent.io/)
+- [Elastic APM](https://www.elastic.co/apm)

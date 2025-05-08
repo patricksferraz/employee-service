@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/c-4u/employee-service/application/grpc/pb"
-	"github.com/c-4u/employee-service/domain/entity"
+	"github.com/patricksferraz/employee-service/application/grpc/pb"
+	"github.com/patricksferraz/employee-service/domain/entity"
 	"google.golang.org/grpc"
 )
 

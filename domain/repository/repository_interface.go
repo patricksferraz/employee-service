@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/c-4u/employee-service/domain/entity"
-	"github.com/c-4u/employee-service/domain/entity/filter"
+	"github.com/patricksferraz/employee-service/domain/entity"
+	"github.com/patricksferraz/employee-service/domain/entity/filter"
 )
 
 type RepositoryInterface interface {

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: employee
-        image: ghcr.io/c-4u/employee-service:latest
+        image: ghcr.io/patricksferraz/employee-service:latest
         ports:
         - name: grpc
           containerPort: 50051

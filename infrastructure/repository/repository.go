@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/c-4u/employee-service/domain/entity"
-	"github.com/c-4u/employee-service/domain/entity/filter"
-	"github.com/c-4u/employee-service/infrastructure/db"
-	"github.com/c-4u/employee-service/infrastructure/external"
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/patricksferraz/employee-service/domain/entity"
+	"github.com/patricksferraz/employee-service/domain/entity/filter"
+	"github.com/patricksferraz/employee-service/infrastructure/db"
+	"github.com/patricksferraz/employee-service/infrastructure/external"
 )
 
 type Repository struct {

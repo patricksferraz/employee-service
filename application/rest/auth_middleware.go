@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/c-4u/employee-service/domain/entity"
-	"github.com/c-4u/employee-service/domain/service"
 	"github.com/gin-gonic/gin"
+	"github.com/patricksferraz/employee-service/domain/entity"
+	"github.com/patricksferraz/employee-service/domain/service"
 )
 
 type AuthMiddleware struct {
